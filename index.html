@@ -64,9 +64,10 @@
     .week-switcher { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:0 0 1.15rem; }
     .week-switcher a { display:grid; place-items:center; min-height:42px; border:1px solid #777; color:#fff; text-decoration:none; font-size:.78rem; font-weight:900; }
     .week-switcher a:hover, .week-switcher a.active { background:var(--yellow); border-color:var(--yellow); color:#231f20; }
-    .view-mode { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:0 0 1rem; }
+    .view-mode { display:none; }
     .view-mode button { min-height:40px; border:1px solid #777; background:transparent; color:#fff; font:800 .76rem/1.2 inherit; cursor:pointer; }
     .view-mode button:hover, .view-mode button.active { background:#fff; border-color:#fff; color:#231f20; }
+    #reference-mode-button { display:none; }
     .progress-card { margin:0 0 1rem; padding:.8rem; border:1px solid #666; color:#fff; }
     .progress-card strong { display:block; font-size:.82rem; margin-bottom:.45rem; }
     .progress-track { height:7px; background:#555; overflow:hidden; }
@@ -93,8 +94,8 @@
       clip-path:polygon(38% 0,100% 0,100% 100%,0 100%);
     }
     .hero .kicker { color:#231f20; font-weight:900; letter-spacing:.13em; font-size:.8rem; }
-    .hero h2 { max-width:820px; font-size:clamp(1.75rem,3.2vw,3rem); line-height:1.08; margin:.6rem 0 1rem; position:relative; z-index:1; }
-    .hero p { max-width:760px; color:#231f20; font-size:1.1rem; position:relative; z-index:1; }
+    .hero h2 { width:min(820px,calc(100% - 270px)); font-size:clamp(1.75rem,3.2vw,3rem); line-height:1.08; margin:.6rem 0 1rem; position:relative; z-index:1; }
+    .hero p { width:min(760px,calc(100% - 270px)); color:#231f20; font-size:1.1rem; position:relative; z-index:1; }
     .hero-brand {
       position:absolute; z-index:2; right:clamp(24px,3vw,54px); top:50%;
       width:clamp(150px,15vw,225px); transform:translateY(-50%);
@@ -129,6 +130,18 @@
     .module-banner h3 { color:var(--yellow); font-size:1.55rem; margin:0 0 .45rem; }
     .module-banner p { color:#e3e8fa; margin:0; max-width:580px; }
     .module-banner svg { width:100%; max-height:170px; }
+    .module-banner-photo { margin:-24px -24px -24px 0; align-self:stretch; min-height:210px; overflow:hidden; border-left:8px solid var(--yellow); }
+    .module-banner-photo img { display:block; width:100%; height:100%; min-height:210px; object-fit:cover; }
+    .case-photo { position:relative; margin:-22px -22px 22px; overflow:hidden; background:#231f20; }
+    .case-photo img { display:block; width:100%; height:clamp(190px,28vw,320px); object-fit:cover; }
+    .case-photo figcaption { position:absolute; right:12px; bottom:10px; padding:.28rem .45rem; background:rgba(35,31,32,.88); color:#fff; font-size:.68rem; font-weight:800; letter-spacing:.04em; }
+    .stage-image { position:relative; margin:18px 0 24px; overflow:hidden; border-bottom:8px solid var(--yellow); background:#231f20; }
+    .stage-image img { display:block; width:100%; height:clamp(210px,34vw,390px); object-fit:cover; }
+    .stage-image.compact img { height:clamp(170px,24vw,270px); }
+    .stage-image figcaption { position:absolute; right:12px; bottom:12px; max-width:min(78%,560px); padding:.38rem .55rem; background:rgba(35,31,32,.9); color:#fff; font-size:.72rem; line-height:1.35; font-weight:800; }
+    .stage-image.instructions img { object-position:center 54%; }
+    .stage-image.skills img { object-position:center 42%; }
+    .stage-image.oversight img { object-position:center 48%; }
     .module-overview { background:#231f20; color:#fff; border-radius:0; padding:24px 26px; margin:0 0 34px; border-left:10px solid var(--yellow); }
     .module-overview h3 { margin:0 0 .55rem; color:var(--yellow); }
     .module-overview p { margin:.35rem 0; color:#e3e8fa; }
@@ -153,6 +166,14 @@
     .card p:last-child, .card ul:last-child { margin-bottom:0; }
     .callout { border-left:6px solid #806d00; background:var(--yellow-soft); padding:18px 20px; border-radius:0; margin:22px 0; }
     .journey-mode-note { margin:0 0 1.2rem; padding:.75rem .85rem; border-left:4px solid var(--yellow); background:#333; color:#f4f4f4; font-size:.8rem; }
+    .week-completion { margin:0 0 1.15rem; padding:12px; background:#151515; border:1px solid #555; }
+    .week-completion > strong { display:block; margin-bottom:9px; color:#fff; font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; }
+    .week-completion-row { display:grid; grid-template-columns:30px 1fr auto; gap:8px; align-items:center; margin:8px 0; color:#fff; font-size:.76rem; }
+    .week-completion-row .week-label { font-weight:900; color:var(--yellow); }
+    .week-completion-row .week-status { color:#d7d7d7; }
+    .week-completion-row .week-mark { width:20px; height:20px; display:grid; place-items:center; border:1px solid #777; color:#aaa; font-weight:900; }
+    .week-completion-row.complete .week-status { color:#fff; font-weight:800; }
+    .week-completion-row.complete .week-mark { background:var(--yellow); border-color:var(--yellow); color:#231f20; }
     .stage-guide { margin:0 0 30px; padding:22px 24px; background:#fff; border-top:8px solid var(--yellow); box-shadow:0 6px 16px rgba(0,0,0,.07); }
     .stage-guide-top { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; }
     .stage-guide .stage-kicker { color:#685600; font-size:.75rem; font-weight:900; letter-spacing:.09em; text-transform:uppercase; }
@@ -164,21 +185,21 @@
     .journey-progress button { min-height:8px; padding:0; border:0; background:#d7d7d7; cursor:pointer; font-size:0; }
     .journey-progress button.complete { background:#806d00; }
     .journey-progress button.current { background:var(--yellow); box-shadow:0 0 0 2px #231f20 inset; }
+    .journey-progress button:disabled { background:#e4e4e4; cursor:not-allowed; opacity:.72; }
+    .journey-progress button.locked::after { content:"\1F512"; display:block; margin-top:-7px; color:#555; font-size:.72rem; }
     .stage-history { margin-top:15px; color:var(--muted); font-size:.84rem; }
     .stage-history strong { color:#231f20; }
-    .guided-start { margin:24px 0 38px; padding:22px; background:#fff; border:1px solid var(--line); }
-    .guided-start h3 { margin:.1rem 0 .35rem; }
-    .guided-start > p { margin:.2rem 0 1rem; color:var(--muted); }
-    .guided-start-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
-    .guided-start-grid button { min-height:94px; padding:12px; border:1px solid var(--line); border-top:6px solid var(--yellow); background:#f8f8f8; color:#231f20; text-align:left; font:800 .82rem/1.3 inherit; cursor:pointer; }
-    .guided-start-grid button:hover { background:var(--yellow-soft); border-color:#806d00; }
-    .guided-start-grid small { display:block; margin-top:5px; color:var(--muted); font-weight:600; }
-    .guided-start-next { display:inline-block; margin-top:16px; padding:.8rem 1rem; border:2px solid #231f20; background:var(--yellow); color:#231f20; font:900 .9rem/1.2 inherit; cursor:pointer; }
+    .guided-start-next { display:block; width:max-content; margin:-4px 0 30px auto; padding:.8rem 1rem; border:2px solid #231f20; background:var(--yellow); color:#231f20; font:900 .9rem/1.2 inherit; cursor:pointer; }
     .guided-start-next:hover { background:#231f20; color:#fff; }
     .stage-footer { display:flex; align-items:center; justify-content:space-between; gap:20px; margin:38px 0 8px; padding:20px 22px; border-top:3px solid #231f20; background:#fff; }
     .stage-footer p { margin:0; max-width:68ch; }
     .stage-footer button { flex:0 0 auto; padding:.8rem 1rem; border:2px solid #231f20; background:var(--yellow); color:#231f20; font:900 .9rem/1.2 inherit; cursor:pointer; }
     .stage-footer button:hover { background:#231f20; color:#fff; }
+    .stage-footer button:disabled, .stage-footer button:disabled:hover { background:#e4e4e4; border-color:#777; color:#555; cursor:not-allowed; }
+    .stage-gate-status { margin:.45rem 0 0; color:#5d5200; font-size:.84rem; font-weight:800; }
+    .stage-gate-status.ready { color:#1d6b35; }
+    .nav-section-links a.locked-stage { color:#777; cursor:not-allowed; opacity:.7; }
+    .nav-section-links a.locked-stage::after { content:" \1F512"; font-size:.72rem; }
     body.guided-mode .module > section[data-stage] { display:none; }
     body.guided-mode .module > section[data-stage].active-stage { display:block; }
     body.guided-mode .reveal-section { opacity:1; transform:none; }
@@ -187,7 +208,17 @@
     body.guided-mode .journey-intro { display:none; }
     body.guided-mode .required-section::before,
     body.guided-mode .journey-phase { display:none; }
-    body.guided-mode .section-check { display:none; }
+    body.guided-mode .module.stage-active > .module-head,
+    body.guided-mode .module.stage-active > .module-banner,
+    body.guided-mode .module.stage-active > .module-overview,
+    body.guided-mode .module.stage-active > .time-note,
+    body.guided-mode .module.stage-active > .scenario-thread,
+    body.guided-mode .module.stage-active > .scenario-arc,
+    body.guided-mode .module.stage-active > .journey-intro,
+    body.guided-mode .module.stage-active > .week-journey,
+    body.guided-mode .module.stage-active > .preparation-requirement,
+    body.guided-mode .module.stage-active > .guided-start-next { display:none; }
+    body.guided-mode .section-check { display:block; }
     body.guided-mode #w7-authority .section-check,
     body.guided-mode #w7-instructions .section-check,
     body.guided-mode #w7-run .section-check,
@@ -366,15 +397,22 @@
     .required-case-layout > .case .case-illustration { height:96px; }
     .case-anchor-trace { background:#fff; border:2px solid #231f20; border-top:9px solid var(--yellow); padding:22px; box-shadow:0 8px 18px rgba(0,0,0,.09); }
     .case-anchor-trace h3 { margin:0 0 16px; }
-    .case-trace-grid { display:grid; grid-template-columns:repeat(6,minmax(145px,1fr)); gap:18px; overflow-x:auto; padding:4px 3px 14px; }
+    .case-trace-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; overflow:visible; padding:4px 3px 14px; }
     .case-trace-step { position:relative; min-height:170px; padding:16px 14px; background:#f5f5f5; border:1px solid #bbb; }
     .case-trace-step:not(:last-child)::after { content:"→"; position:absolute; right:-17px; top:50%; transform:translateY(-50%); z-index:2; color:#806d00; font-size:1.35rem; font-weight:900; }
+    .case-trace-step:nth-child(3)::after { content:"↓"; right:50%; top:auto; bottom:-22px; transform:translateX(50%); }
     .case-trace-step strong { display:block; margin-bottom:8px; color:#231f20; }
     .case-trace-step span { color:#555; font-size:.9rem; line-height:1.4; }
     .case-trace-step.prompt-step { background:var(--yellow-soft); border-color:#806d00; }
     .case-trace-step details { margin:10px 0 0; border-radius:0; }
     .case-trace-step summary { padding:10px; font-size:.82rem; }
     .case-trace-step details .details-body { padding:2px 10px 10px; font-size:.86rem; }
+    .case-mechanism { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; margin:18px 0 20px; padding:18px; background:#f7f7f7; border-block:2px solid #231f20; }
+    .case-mechanism > div { position:relative; text-align:center; }
+    .case-mechanism > div:not(:last-child)::after { content:"→"; position:absolute; right:-20px; top:35%; color:#806d00; font-size:1.45rem; font-weight:900; }
+    .case-mechanism .mechanism-icon { display:grid; place-items:center; width:58px; height:58px; margin:0 auto 9px; border-radius:50%; background:var(--yellow); color:#231f20; font-size:1.55rem; font-weight:900; }
+    .case-mechanism strong { display:block; margin-bottom:4px; }
+    .case-mechanism small { color:#555; line-height:1.35; }
     .diagnostic-challenge { padding:22px; background:#fff; border:2px solid #231f20; border-top:9px solid var(--yellow); }
     .diagnostic-challenge h3 { margin-top:0; }
     .diagnostic-prompts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:16px 0; }
@@ -387,6 +425,31 @@
     .complexity-diagnostic p { margin:0; }
     .complexity-signals { padding:13px 15px; background:var(--yellow-soft); border-left:5px solid var(--yellow); }
     .complexity-signals strong { display:block; margin-bottom:4px; }
+    .visual-sequence { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; margin:20px 0 28px; counter-reset:visual-step; }
+    .visual-sequence > .card { position:relative; min-width:0; padding:18px 34px 14px 16px; border:0; border-top:7px solid var(--yellow); background:transparent; box-shadow:none; }
+    .visual-sequence > .card:not(:last-child)::after { content:"→"; position:absolute; top:42%; right:8px; color:#806d00; font-size:1.45rem; font-weight:900; }
+    .visual-sequence .icon-badge { width:38px; height:38px; margin-bottom:10px; }
+    .visual-options { display:grid; gap:12px; margin:20px 0 28px; }
+    .visual-options.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .visual-options.three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .visual-options > .card { padding:18px; border:0; border-left:8px solid var(--yellow); background:#fff; box-shadow:0 3px 10px rgba(0,0,0,.05); }
+    .definition-strip { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; margin:16px 0; background:#231f20; border:2px solid #231f20; }
+    .definition-strip > div { padding:16px; background:#fff; }
+    .definition-strip strong { display:block; color:#806d00; margin-bottom:5px; }
+    .diagnosis-line { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:12px 0 26px; border-block:2px solid #231f20; }
+    .diagnosis-line > div { padding:15px 18px; }
+    .diagnosis-line > div + div { border-left:1px solid #aaa; }
+    .diagnosis-line strong { display:block; margin-bottom:4px; }
+    .state-layers { display:grid; gap:8px; margin:18px 0 24px; }
+    .state-layer { display:grid; grid-template-columns:minmax(180px,.38fr) 1fr; gap:18px; align-items:center; padding:14px 18px; border-left:10px solid var(--yellow); background:#fff; box-shadow:0 3px 10px rgba(0,0,0,.05); }
+    .state-layer:nth-child(2) { margin-inline:5%; border-left-color:#806d00; }
+    .state-layer:nth-child(3) { margin-inline:10%; border-left-color:#231f20; }
+    .state-layer strong { font-size:1.02rem; }
+    .oversight-path { list-style:none; padding:0; margin:22px 0 28px; display:grid; gap:0; counter-reset:oversight-step; }
+    .oversight-path li { counter-increment:oversight-step; display:grid; grid-template-columns:52px minmax(140px,.32fr) 1fr; gap:16px; align-items:center; padding:15px 12px; border-bottom:1px solid #aaa; }
+    .oversight-path li::before { content:counter(oversight-step); display:grid; place-items:center; width:40px; height:40px; border-radius:50%; background:var(--yellow); font-weight:900; }
+    .oversight-path strong { font-size:1.05rem; }
+    .oversight-path small { display:block; margin-top:4px; color:#5f5100; font-weight:800; }
     .case-source { margin:16px 0 0; padding-top:14px; border-top:1px solid #ccc; }
     .scope-strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:20px 0; }
     .scope-strip div { padding:16px; background:#231f20; color:#fff; border-bottom:7px solid var(--yellow); }
@@ -470,6 +533,20 @@
     .knowledge-checks { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin:20px 0 30px; }
     .knowledge-checks .quick-check { margin:0; }
     .knowledge-checks .question-number { color:#655500; font-size:.76rem; letter-spacing:.08em; font-weight:900; text-transform:uppercase; }
+    .prep-download { margin:36px 0 12px; padding:28px 30px 30px; background:#231f20; color:#fff; border-top:12px solid var(--yellow); box-shadow:0 10px 24px rgba(0,0,0,.18); }
+    .prep-download .prep-label { display:inline-block; margin-bottom:12px; padding:.32rem .55rem; background:var(--yellow); color:#231f20; font-size:.76rem; font-weight:900; letter-spacing:.09em; text-transform:uppercase; }
+    .prep-download h3 { margin:.1rem 0 .65rem; color:#fff; font-size:clamp(1.55rem,3vw,2.2rem); }
+    .prep-download p { max-width:72ch; color:#f1f1f1; }
+    .prep-download a { display:inline-block; margin-top:12px; padding:1rem 1.25rem; background:var(--yellow); border:3px solid var(--yellow); color:#231f20; font-size:1rem; font-weight:900; text-decoration:none; }
+    .prep-download a:hover { background:#fff; border-color:#fff; color:#231f20; }
+    .preparation-requirement { margin:24px 0 30px; padding:24px 26px; background:#fff8c7; border:4px solid #231f20; border-top:14px solid var(--yellow); box-shadow:0 8px 18px rgba(0,0,0,.12); }
+    .preparation-requirement .requirement-label { display:inline-block; margin-bottom:10px; padding:.3rem .55rem; background:#231f20; color:#fff; font-size:.76rem; font-weight:900; letter-spacing:.09em; text-transform:uppercase; }
+    .preparation-requirement h3 { margin:.1rem 0 .55rem; font-size:clamp(1.35rem,2.6vw,1.9rem); color:#231f20; }
+    .preparation-requirement > p { margin:.35rem 0 .8rem; max-width:78ch; }
+    .preparation-steps { margin:.9rem 0 .4rem; padding:0; list-style:none; counter-reset:required-step; display:grid; gap:9px; }
+    .preparation-steps li { position:relative; min-height:42px; padding:9px 12px 9px 52px; background:#fff; border:1px solid #9a8500; counter-increment:required-step; }
+    .preparation-steps li::before { content:counter(required-step); position:absolute; left:9px; top:8px; width:28px; height:28px; display:grid; place-items:center; background:var(--yellow); color:#231f20; font-weight:900; border-radius:50%; }
+    .preparation-requirement .unlock-note { margin-top:12px; font-weight:900; }
     .choices { display:grid; gap:9px; }
     .choice { text-align:left; border:1px solid var(--line); background:#fff; padding:12px 14px; border-radius:0; cursor:pointer; font:inherit; color:var(--ink); }
     .choice:hover { border-color:#231f20; background:var(--yellow-soft); }
@@ -524,6 +601,15 @@
       .diagnostic-prompts { grid-template-columns:1fr; }
       .complexity-diagnostic li { grid-template-columns:46px minmax(0,1fr); }
       .complexity-signals { grid-column:1 / -1; }
+      .visual-sequence, .visual-options.two, .visual-options.three, .definition-strip, .diagnosis-line { grid-template-columns:1fr; }
+      .visual-sequence > .card:not(:last-child)::after { content:"↓"; top:auto; bottom:-18px; right:50%; }
+      .diagnosis-line > div + div { border-left:0; border-top:1px solid #aaa; }
+      .state-layer, .oversight-path li { grid-template-columns:46px 1fr; }
+      .state-layer { margin-inline:0 !important; }
+      .oversight-path li > div { grid-column:2; }
+      .case-trace-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .case-trace-step:nth-child(3)::after { content:"→"; right:-17px; top:50%; bottom:auto; transform:translateY(-50%); }
+      .case-trace-step:nth-child(even):not(:last-child)::after { content:"↓"; right:50%; top:auto; bottom:-22px; transform:translateX(50%); }
     }
     @media (max-width:650px) {
       .module > section + section { margin-top:56px; }
@@ -531,6 +617,8 @@
       .case-progression { grid-template-columns:1fr; }
       .spectrum { grid-template-columns:1fr 1fr; }
       .hero { padding-top:46px; }
+      .hero::after { display:none; }
+      .hero h2, .hero p { width:100%; max-width:none; }
       .hero-brand { position:relative; right:auto; top:auto; width:190px; transform:none; margin-top:28px; }
       .comparison { font-size:.9rem; }
       .comparison th, .comparison td { padding:10px; }
@@ -538,9 +626,11 @@
       .stage-guide-top, .stage-footer { display:block; }
       .stage-output { margin-top:14px; }
       .stage-footer button { width:100%; margin-top:14px; }
-      .guided-start-grid { grid-template-columns:1fr; }
+      .guided-start-next { width:100%; margin-top:0; }
       .scope-strip, .values-equation { grid-template-columns:1fr; }
       .principles-visual { grid-template-columns:1fr; }
+      .case-trace-grid, .case-mechanism { grid-template-columns:1fr; }
+      .case-trace-step:not(:last-child)::after, .case-trace-step:nth-child(3)::after, .case-trace-step:nth-child(even):not(:last-child)::after, .case-mechanism > div:not(:last-child)::after { content:"↓"; right:50%; top:auto; bottom:-22px; transform:translateX(50%); }
       .principles-centre { grid-column:1; }
       .w9-section-icon { width:40px; height:40px; font-size:1.05rem; }
       .responsibility-flow li { grid-template-columns:48px 1fr; }
@@ -566,6 +656,9 @@
       .week-recap ul { grid-template-columns:1fr; }
       .week-card { min-height:0; }
       .media-lesson { grid-template-columns:1fr; }
+      .module-banner { grid-template-columns:1fr; padding-bottom:0; }
+      .module-banner-photo { margin:20px -24px 0; min-height:220px; border-left:0; border-top:8px solid var(--yellow); }
+      .module-banner-photo img { min-height:220px; }
       .reading-lesson { grid-template-columns:58px 1fr; }
       .reading-lesson a { grid-column:1 / -1; text-align:center; }
     }
@@ -607,7 +700,12 @@
         <button type="button" id="guided-mode-button" class="active" aria-pressed="true">Guided journey</button>
         <button type="button" id="reference-mode-button" aria-pressed="false">Reference view</button>
       </div>
-      <div class="journey-mode-note" id="journey-mode-note">One stage is shown at a time. Use Continue to follow the intended learning journey.</div>
+      <div class="week-completion" id="week-completion" aria-live="polite">
+        <strong>Your weekly progress</strong>
+        <div class="week-completion-row" data-completion-week="week7"><span class="week-label">W7</span><span class="week-status">Ready to start</span><span class="week-mark" aria-hidden="true">○</span></div>
+        <div class="week-completion-row" data-completion-week="week8"><span class="week-label">W8</span><span class="week-status">Ready to start</span><span class="week-mark" aria-hidden="true">○</span></div>
+        <div class="week-completion-row" data-completion-week="week9"><span class="week-label">W9</span><span class="week-status">Ready to start</span><span class="week-mark" aria-hidden="true">○</span></div>
+      </div>
       <div class="progress-card" id="section-progress" aria-live="polite" hidden>
         <strong id="progress-label">Section 1 of 1</strong>
         <div class="progress-track" aria-hidden="true"><span class="progress-fill" id="progress-fill"></span></div>
@@ -656,7 +754,7 @@
           <div class="nav-section-links"><a href="#sources">Sources and further study</a></div>
         </div>
       </nav>
-      <div class="rail-note">Complete the required weekly companion and its required media before the seminar. The self-checks are unmarked.</div>
+      <div class="rail-note"><strong>Required each week:</strong> complete the companion and required media, answer every final review question correctly, then download, complete and bring the weekly activity to class. The self-checks are unmarked.</div>
     </aside>
 
     <main id="main-content">
@@ -673,6 +771,17 @@
         <section class="orientation page-view active-view" id="overview" data-view="overview">
           <div class="section-label">Orientation</div>
           <h2 class="section-title">How the three modules connect</h2>
+          <div class="preparation-requirement" role="note" aria-label="Required preparation for every seminar">
+            <div class="requirement-label">Required before every seminar</div>
+            <h3>Complete the weekly companion and bring the unlocked activity to class</h3>
+            <p>At the end of each weekly topic, you must complete a Word activity and bring it to class. Its download stays locked until you complete the week and answer every question in the final <strong>Review understanding</strong> section correctly.</p>
+            <ol class="preparation-steps">
+              <li>Complete the weekly companion and all required readings, videos and other media.</li>
+              <li>Answer every question in the final <strong>Review understanding</strong> section correctly. You can retry incorrect answers.</li>
+              <li>Download the unlocked Word activity, complete it and bring it to the seminar.</li>
+            </ol>
+            <p class="unlock-note">The self-checks are unmarked. Completing and bringing the final activity is required seminar preparation.</p>
+          </div>
           <div class="grid three">
             <a class="week-card" href="#w7-overview" aria-label="Open Week 7: Simple agents">
               <div class="week-card-visual" aria-hidden="true">
@@ -702,9 +811,15 @@
             <h2 class="section-title">What are simple AI agents?</h2>
             <p>This week begins with a familiar workplace task and builds towards an understanding of how a simple AI agent can help complete it.</p>
           </div>
+          <div class="preparation-requirement" role="note" aria-label="Required Week 7 preparation">
+            <div class="requirement-label">Required Week 7 preparation</div>
+            <h3>Complete the companion and bring your Simple Agent Candidate Card</h3>
+            <ol class="preparation-steps"><li>Complete Week 7 and its required media.</li><li>Answer all four final review questions correctly to unlock the download.</li><li>Complete the Word card and bring it to the seminar.</li></ol>
+            <p class="unlock-note">The self-checks are unmarked. The activity download remains locked until all four final answers are correct.</p>
+          </div>
           <div class="module-banner">
             <div><h3>How can AI move from answering a question to supporting a task?</h3><p>A simple agent helps complete a defined piece of work step by step, while people retain responsibility for important decisions and actions.</p></div>
-            <svg viewBox="0 0 360 170" role="img" aria-label="A user goal flows into a bounded agent and then to a reviewed output."><defs><marker id="arrow7" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#ffe600"/></marker></defs><circle cx="42" cy="85" r="28" fill="#ffe600"/><text x="42" y="90" text-anchor="middle" font-size="14" font-weight="700" fill="#231f20">GOAL</text><path d="M74 85 H118" stroke="#ffe600" stroke-width="4" marker-end="url(#arrow7)"/><rect x="128" y="35" width="122" height="100" rx="4" fill="#fff"/><text x="189" y="62" text-anchor="middle" font-size="15" font-weight="800" fill="#231f20">AGENT</text><rect x="144" y="75" width="42" height="24" rx="2" fill="#f1f1f1"/><rect x="192" y="75" width="42" height="24" rx="2" fill="#f1f1f1"/><rect x="144" y="105" width="90" height="17" rx="2" fill="#fff7bf"/><path d="M255 85 H292" stroke="#ffe600" stroke-width="4" marker-end="url(#arrow7)"/><rect x="301" y="57" width="48" height="56" rx="4" fill="#fff7bf"/><path d="M315 84 l9 9 14-19" fill="none" stroke="#231f20" stroke-width="5"/></svg>
+            <figure class="module-banner-photo"><img src="assets/week-7-frontline-agent.jpg" alt="A frontline employee reviewing a customer enquiry at a computer in a contemporary workplace." loading="lazy" decoding="async"></figure>
           </div>
           <div class="module-overview" id="w7-overview">
             <h3>What will you learn this week?</h3>
@@ -786,7 +901,7 @@
             <div class="scenario-thread"><div class="scenario-label">Back to our scenario</div><p><strong>The recurring service-enquiry agent is an organisational agent.</strong> It supports an approved service process, uses organisational guidance and prepares an output for an authorised employee. Its permissions and boundaries must therefore be defined by the organisation, and responsibility cannot be assigned to the person who configured it alone.</p></div>
             </div></details>
             <div class="callout"><strong>Course terminology:</strong> there is no universally agreed boundary between a simple and complex agent. In this course, a <strong>simple agent</strong> supports one bounded outcome using limited knowledge or tools, a manageable process and explicit human-controlled boundaries.</div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="Agentic behaviour is evident when the system pursues a defined goal by selecting or coordinating permitted steps within its boundaries."><div class="question-number">Pause and check</div><h3>Which feature most clearly indicates agentic behaviour?</h3><div class="choices"><button class="choice">The system produces conversational text.</button><button class="choice">The system pursues a goal through permitted steps.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="Agentic behaviour is evident when the system pursues a defined goal by selecting or coordinating permitted steps within its boundaries."><div class="question-number">Pause and check</div><h3>Which feature most clearly indicates agentic behaviour?</h3><div class="choices"><button class="choice">The system produces conversational text.</button><button class="choice">The system pursues a goal through permitted steps.</button><button class="choice">The system produces detailed answers without using a template.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w7-capabilities" class="required-section" data-stage="2">
@@ -794,14 +909,6 @@
             <h2>What must be designed into a simple agent? <span class="section-time">About 7 min</span></h2>
             <p>A simple agent brings together a small number of building blocks. Each one answers a different design question.</p>
             <div class="scenario-thread"><div class="scenario-label">Scenario step 2</div><p><strong>The enquiry becomes a bounded agent task.</strong> The agent supports one outcome: help the employee prepare the next appropriate response to this recurring service disruption. Each building block below contributes to that task.</p></div>
-            <div class="grid three">
-              <div class="card"><div class="icon-badge" aria-hidden="true">◎</div><h3>Outcome or goal</h3><p>Prepare an appropriate next step for the employee to review.</p></div>
-              <div class="card"><div class="icon-badge" aria-hidden="true">≡</div><h3>Instructions</h3><p>Gather required details, consult approved guidance, state uncertainty and escalate defined situations.</p></div>
-              <div class="card"><div class="icon-badge" aria-hidden="true">AI</div><h3>AI model: reasoning and planning</h3><p>Interprets the customer’s description, identifies gaps and selects an appropriate permitted next step.</p></div>
-              <div class="card"><div class="icon-badge" aria-hidden="true">▤</div><h3>Knowledge</h3><p>Approved troubleshooting, service-disruption and escalation guidance.</p></div>
-              <div class="card"><div class="icon-badge" aria-hidden="true">⚙</div><h3>Tool</h3><p>Searches the approved guidance supplied to the prototype.</p></div>
-              <div class="card"><div class="icon-badge" aria-hidden="true">↻</div><h3>Task context and state</h3><p>Tracks what the customer reported, which details remain missing and which steps have already been attempted.</p></div>
-            </div>
             <div class="diagram" role="img" aria-label="A user provides an outcome or goal to an agent made of instructions, knowledge, model and task context. The agent produces a response or uses a permitted tool, with human review.">
               <div class="diagram-title">Anatomy of a bounded simple agent</div>
               <div class="agent-anatomy">
@@ -812,11 +919,11 @@
                 <div><div class="diagram-node">Response or permitted tool</div><div class="diagram-node human" style="margin-top:10px">Human review</div></div>
               </div>
             </div>
-            <details><summary>How are context, state and memory different?</summary><div class="details-body"><div class="grid three"><div class="card"><h3>Context</h3><p>Information available during the current interaction.</p></div><div class="card"><h3>State</h3><p>Information recording progress through the current task.</p></div><div class="card"><h3>Memory</h3><p>Information retained for use in later interactions.</p></div></div><p>A simple agent may use context and temporary state without retaining long-term memory.</p></div></details>
+            <details><summary>How are context, state and memory different?</summary><div class="details-body"><div class="definition-strip"><div><strong>Context</strong>Information available during the current interaction.</div><div><strong>State</strong>Information recording progress through the current task.</div><div><strong>Memory</strong>Information retained for use in later interactions.</div></div><p>A simple agent may use context and temporary state without retaining long-term memory.</p></div></details>
 
             <details><summary>Explore examples of tools an agent might use</summary><div class="details-body">
               <p>A tool is a capability the agent is permitted to call while completing its task. The platform hosts the agent; tools extend what the agent can retrieve, process or change. Producing ordinary text may be a direct model output and does not always require a separate tool.</p>
-              <div class="grid three">
+              <div class="grid three visual-sequence">
                 <div class="card"><div class="icon-badge" aria-hidden="true">⌕</div><h3>Information tools</h3><p>Search approved documents, websites, databases or records.</p></div>
                 <div class="card"><div class="icon-badge" aria-hidden="true">∑</div><h3>Processing tools</h3><p>Calculate, analyse data, convert formats or apply a defined rule.</p></div>
                 <div class="card"><div class="icon-badge" aria-hidden="true">⚙</div><h3>Action tools</h3><p>Send a message, update a record, create a case or trigger a workflow when explicitly authorised.</p></div>
@@ -848,7 +955,7 @@
               <p><strong>Optional reading, about 3 min:</strong> read the introductory explanation of Computer Use and the safety guidance on confirmation, permissions and consequential actions. <a href="https://learn.chatgpt.com/docs/computer-use" target="_blank" rel="noopener">Open the focused documentation ↗</a></p>
             </div></details>
             <div class="callout"><strong>Keep the first design bounded:</strong> one user, one outcome, a limited set of information or tools, and a clear point where a person reviews, decides or acts.</div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="A tool extends what the agent can retrieve, process or change. The goal and operating boundaries are defined through the wider agent design."><div class="question-number">Pause and check</div><h3>What is the role of a tool in an agent?</h3><div class="choices"><button class="choice">It defines the agent’s goal and authority.</button><button class="choice">It performs a permitted retrieval, processing step or action.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="A tool extends what the agent can retrieve, process or change. The goal and operating boundaries are defined through the wider agent design."><div class="question-number">Pause and check</div><h3>What is the role of a tool in an agent?</h3><div class="choices"><button class="choice">It defines the agent’s goal and authority.</button><button class="choice">It performs a permitted retrieval, processing step or action.</button><button class="choice">It stores every interaction as permanent organisational memory.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w7-simple" class="required-section" data-stage="2">
@@ -864,7 +971,7 @@
               <div><span class="pill">FOCUSED READING · APPROX. 5 MIN</span><h3>AI agents in project management: benefits and key use cases</h3><p>Read only <strong>“What are AI agents?”</strong>, <strong>“How do AI agents work in project management?”</strong> and <strong>“Step 1: Start with pilot use cases”</strong>. Identify the distinction from fixed automation, the operating loop and the case for beginning with a focused use case. Treat product claims as vendor claims.</p></div>
               <a href="https://www.atlassian.com/agile/project-management/ai-agents#what-are-ai-agents" target="_blank" rel="noopener">Open the focused reading ↗</a>
             </div>
-            <div class="quick-check section-check" data-answer="0" data-explanation="One bounded outcome, limited approved information and a clear human handoff are strong indicators that a simple-agent design may be suitable."><div class="question-number">Pause and check</div><h3>Which use case is the stronger candidate for a simple agent?</h3><div class="choices"><button class="choice">Preparing one bounded recommendation from approved guidance.</button><button class="choice">Resolving every service problem and changing customer accounts independently.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="One bounded outcome, limited approved information and a clear human handoff are strong indicators that a simple-agent design may be suitable."><div class="question-number">Pause and check</div><h3>Which use case is the stronger candidate for a simple agent?</h3><div class="choices"><button class="choice">Preparing one bounded recommendation from approved guidance.</button><button class="choice">Resolving every service problem and changing customer accounts independently.</button><button class="choice">Monitoring several departments and autonomously reprioritising their work.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w7-authority" class="required-section" data-stage="2">
@@ -892,20 +999,17 @@
                 <p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=G9UcQ1eD87M" target="_blank" rel="noopener">open the clip on YouTube ↗</a>.</p>
               </div>
             </div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="As authority increases, the potential consequences increase, so permissions, review, escalation and stopping conditions must become stronger."><div class="question-number">Pause and check</div><h3>What should happen as an agent receives greater authority?</h3><div class="choices"><button class="choice">Human oversight can be reduced because the agent is more capable.</button><button class="choice">Permissions, controls and review requirements should become stronger.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="As authority increases, the potential consequences increase, so permissions, review, escalation and stopping conditions must become stronger."><div class="question-number">Pause and check</div><h3>What should happen as an agent receives greater authority?</h3><div class="choices"><button class="choice">Human oversight can be reduced because the agent is more capable.</button><button class="choice">Permissions, controls and review requirements should become stronger.</button><button class="choice">The agent should receive broader access so it can resolve exceptions independently.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w7-instructions" class="required-section" data-stage="3">
             <h2>How do design decisions become agent instructions? <span class="section-time">About 8 min</span></h2>
+            <figure class="stage-image instructions"><img src="assets/week-7-instructions.jpg" alt="A person translating a customer-service workflow into a structured checklist and operating design." loading="lazy" decoding="async"><figcaption>Instructions begin with a designed workflow, clear boundaries and an expected output.</figcaption></figure>
             <p>Instructions are the bridge between the intended service and the agent configured in a builder. The quality of the instructions depends on the quality of the design decisions made first.</p>
             <div class="scenario-thread"><div class="scenario-label">Scenario step 5</div><p><strong>The recurring-disruption enquiry now becomes an operating instruction.</strong> The design decisions about the user, outcome, inputs, process, output and authority must be expressed clearly enough for the agent builder to use.</p></div>
 
             <div class="instruction-example weak"><strong>A weak starting instruction</strong>Help an employee respond to a customer who reports recurring internet dropouts.</div>
-            <div class="grid three">
-              <div class="card"><div class="icon-badge" aria-hidden="true">?</div><h3>Unclear outcome</h3><p>The agent does not know what successful support should produce.</p></div>
-              <div class="card"><div class="icon-badge" aria-hidden="true">⌕</div><h3>Missing process</h3><p>It does not know what to gather, check or ask before responding.</p></div>
-              <div class="card"><div class="icon-badge" aria-hidden="true">!</div><h3>Undefined authority</h3><p>Sources, prohibited actions, escalation and human responsibility are unspecified.</p></div>
-            </div>
+            <div class="diagnosis-line" aria-label="Three weaknesses in the starting instruction"><div><strong>Unclear outcome</strong>The successful result is undefined.</div><div><strong>Missing process</strong>Required questions, checks and sources are absent.</div><div><strong>Undefined authority</strong>Prohibited actions, escalation and human responsibility are unspecified.</div></div>
 
             <h3>1. Which six elements must be designed before the tool is configured?</h3>
             <div class="design-decisions" aria-label="Six decisions for designing a bounded agent">
@@ -934,7 +1038,7 @@
             <h3>3. How is the design configured and refined?</h3>
             <div class="design-loop" aria-label="Agent design refinement cycle"><div>Design</div><div>Configure</div><div>Observe</div><div>Refine</div></div>
             <p>When behaviour is poor, diagnose the design: is the goal unclear, information missing, process underspecified, output ambiguous or authority excessive?</p>
-            <div class="quick-check section-check" data-answer="0" data-explanation="The user, outcome, inputs, process, output and authority should be decided before they are translated into a builder’s configuration fields."><div class="question-number">Pause and check</div><h3>What should happen before an agent is configured in a builder?</h3><div class="choices"><button class="choice">Define the six design elements and translate them into instructions.</button><button class="choice">Select every available tool and let the platform infer the design.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="The user, outcome, inputs, process, output and authority should be decided before they are translated into a builder’s configuration fields."><div class="question-number">Pause and check</div><h3>What should happen before an agent is configured in a builder?</h3><div class="choices"><button class="choice">Define the six design elements and translate them into instructions.</button><button class="choice">Select every available tool and let the platform infer the design.</button><button class="choice">Begin with a broad goal and define boundaries after observing the deployed agent.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w7-platforms" class="required-section" data-stage="4">
@@ -951,7 +1055,7 @@
               <div class="media-card"><div><div class="type">OPTIONAL VIDEO · MICROSOFT LEARN</div><h3>What are AI agents?</h3><p>A video-led introduction covering the main parts of an AI agent. This is excluded from the required pathway time.</p></div><a href="https://learn.microsoft.com/en-us/shows/ai-agents-for-beginners/what-are-ai-agents" target="_blank" rel="noopener">Watch on Microsoft Learn ↗</a></div>
               <div class="media-card"><div><div class="type">OPTIONAL REFERENCE · APPROX. 2 MIN</div><h3>Introduction to agents</h3><p>Read only <strong>“How agents work”</strong> and its component table for Microsoft’s account of instructions, the model, orchestration, knowledge and skills.</p></div><a href="https://learn.microsoft.com/en-us/agents/design-guidelines/intro-to-agents#how-agents-work" target="_blank" rel="noopener">Open the focused reference ↗</a></div>
             </div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="A builder provides configuration capabilities. People remain responsible for defining the intended outcome, information, process, authority and human responsibilities."><div class="question-number">Pause and check</div><h3>What does an agent builder provide?</h3><div class="choices"><button class="choice">A complete organisational design and automatic approval for deployment.</button><button class="choice">A way to configure instructions, knowledge and permitted capabilities.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="A builder provides configuration capabilities. People remain responsible for defining the intended outcome, information, process, authority and human responsibilities."><div class="question-number">Pause and check</div><h3>What does an agent builder provide?</h3><div class="choices"><button class="choice">A complete organisational design and automatic approval for deployment.</button><button class="choice">A way to configure instructions, knowledge and permitted capabilities.</button><button class="choice">A guarantee that every configured response complies with organisational policy.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w7-triggers" class="required-section" data-stage="4">
@@ -959,7 +1063,7 @@
             <h2>What starts and ends an agent run? <span class="section-time">About 4 min</span></h2>
             <p>An agent needs a defined trigger that begins the work and explicit conditions that end it. A trigger starts a run; it does not expand the agent’s authority.</p>
             <div class="scenario-thread"><div class="scenario-label">Scenario step 7</div><p><strong>The employee initiates this agent.</strong> When a recurring-disruption enquiry arrives, the authorised employee provides the case information and asks the agent to prepare a recommended next step. A monitoring agent could instead begin on a schedule or when a defined event occurs.</p></div>
-            <div class="grid three">
+            <div class="grid three visual-sequence">
               <div class="card"><div class="icon-badge" aria-hidden="true">▶</div><h3>User-triggered</h3><p>A person starts the run by making a request, selecting an action or providing a case.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">◷</div><h3>Scheduled</h3><p>The run begins at a defined time or interval, such as checking public prices each morning.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">⚡</div><h3>Event-triggered</h3><p>The run begins when a defined event occurs, such as a new enquiry entering an approved queue.</p></div>
@@ -970,7 +1074,7 @@
               <div class="card"><h3>Normal completion</h3><p>The defined outcome has been reached, the requested output has been prepared or the user ends the run.</p></div>
               <div class="card"><h3>Limit or escalation</h3><p>The agent reaches a maximum number of attempts or a time limit, encounters repeated tool failure, lacks required information, moves beyond its guidance or requires human approval.</p></div>
             </div>
-            <div class="quick-check section-check" data-answer="0" data-explanation="A trigger determines when a run begins. Instructions, permissions and boundaries determine what the agent may do during that run."><div class="question-number">Pause and check</div><h3>Does a scheduled trigger give an agent greater authority?</h3><div class="choices"><button class="choice">No. The trigger changes when work begins, not what is permitted.</button><button class="choice">Yes. Scheduled agents may act without the usual boundaries.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="A trigger determines when a run begins. Instructions, permissions and boundaries determine what the agent may do during that run."><div class="question-number">Pause and check</div><h3>Does a scheduled trigger give an agent greater authority?</h3><div class="choices"><button class="choice">No. The trigger changes when work begins, not what is permitted.</button><button class="choice">Yes. Scheduled agents may act without the usual boundaries.</button><button class="choice">Only when the trigger runs outside normal business hours.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w7-run" class="required-section" data-stage="4">
@@ -993,23 +1097,24 @@
               <div class="run-step human"><strong>Employee reviews and decides</strong><p>The employee verifies the information and recommendation, then chooses the human-controlled outcome.</p><div class="run-outcomes"><span>Act within authority</span><span>Escalate or refer</span></div></div>
             </div>
             <div class="run-loop-note"><span aria-hidden="true">↶</span>If required information is still missing, return to “Assess the information”.</div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="The agent should gather the required details and reassess the case instead of inventing information or proceeding as though the case were complete."><div class="question-number">Pause and check</div><h3>What should the agent do when required information is missing?</h3><div class="choices"><button class="choice">Infer the missing details and complete the recommendation.</button><button class="choice">Request the missing details and return to assessment.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="The agent should gather the required details and reassess the case instead of inventing information or proceeding as though the case were complete."><div class="question-number">Pause and check</div><h3>What should the agent do when required information is missing?</h3><div class="choices"><button class="choice">Infer the missing details and complete the recommendation.</button><button class="choice">Request the missing details and return to assessment.</button><button class="choice">Use the most common value from earlier cases and label it as confirmed.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w7-record" class="optional-section" data-stage="4">
             <h2>What should be visible after an agent run? <span class="section-time">Optional · about 4 min</span></h2>
             <p>An organisational agent should leave enough information for an authorised person to understand what happened, review the result and respond when something went wrong. The detail required should reflect the consequences of the task.</p>
             <div class="scenario-thread"><div class="scenario-label">Scenario step 9</div><p><strong>The employee reviews more than the final recommendation.</strong> They should be able to see what goal the agent pursued, what information and approved guidance it used, what it attempted, what remains uncertain and why it completed, stopped or escalated.</p></div>
-            <div class="grid three">
+            <div class="visual-options three">
               <div class="card"><div class="icon-badge" aria-hidden="true">◎</div><h3>Goal and result</h3><p>What outcome was requested, what output was produced and whether the work was completed.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">⌕</div><h3>Sources, tools and actions</h3><p>What information the agent used, which permitted tools it called and what actions it attempted or completed.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">!</div><h3>Uncertainty and intervention</h3><p>What remained uncertain, why the run stopped or escalated, and where a person reviewed, approved or intervened.</p></div>
             </div>
             <div class="callout"><strong>An observable run supports review and accountability.</strong> A polished final answer alone may hide missing information, inappropriate tool use or a failed step.</div>
-            <div class="quick-check section-check" data-answer="0" data-explanation="An inspectable record helps a person review the sources, tools, actions, uncertainty and points of intervention behind the final result."><div class="question-number">Pause and check</div><h3>Why should the complete agent run be inspectable?</h3><div class="choices"><button class="choice">So a person can review how the result was produced and where intervention occurred.</button><button class="choice">So the final response can replace all human judgement.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="An inspectable record helps a person review the sources, tools, actions, uncertainty and points of intervention behind the final result."><div class="question-number">Pause and check</div><h3>Why should the complete agent run be inspectable?</h3><div class="choices"><button class="choice">So a person can review how the result was produced and where intervention occurred.</button><button class="choice">So the final response can replace all human judgement.</button><button class="choice">So the organisation can evaluate the agent only by its completion speed.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
           <section id="w7-knowledge-check" class="required-section" data-stage="5">
             <h2>How well do you understand simple agents? <span class="section-time">About 5 min</span></h2>
+            <figure class="stage-image compact"><img src="assets/week-7-frontline-agent.jpg" alt="A frontline employee reviewing a customer enquiry before deciding what action to take." loading="lazy" decoding="async"><figcaption>Review the whole Week 7 journey from customer problem to employee-reviewed recommendation.</figcaption></figure>
             <p>Use these four unmarked knowledge checks to apply ideas from across the week. Select one answer for each question to receive immediate feedback.</p>
             <div class="knowledge-checks">
               <div class="quick-check" data-answer="1" data-explanation="The weakness is in the input and process design. The agent should be required to collect defined information before recommending a next step, then stop or escalate when essential information remains unavailable.">
@@ -1057,6 +1162,13 @@
                 <div class="feedback" aria-live="polite"></div>
               </div>
             </div>
+            <div class="prep-download" id="w7-preparation-download" hidden>
+              <div class="prep-label">Required seminar preparation</div>
+              <h3>Prepare one item for the seminar</h3>
+              <p>Download and complete the <strong>Simple Agent Candidate Card</strong>. Choose one recurring task from work, study or everyday life that might be supported by a simple agent. Use a hypothetical example and do not include personal, confidential or sensitive information.</p>
+              <p>Bring the completed one-page card to class. You will briefly explain your candidate to another student before applying the same design questions to the organisational case introduced in the seminar.</p>
+              <a id="w7-preparation-download-link" download>Download the Word template ↓</a>
+            </div>
           </section>
           <div class="week-recap">
             <h3>What should you take from Week 7?</h3>
@@ -1073,9 +1185,15 @@
             <h2 class="section-title">How should complex agentic systems be designed?</h2>
             <p>Complexity can arise inside one agent or through coordination among several agents. Agent count is one design choice, not a definition of complexity.</p>
           </div>
+          <div class="preparation-requirement" role="note" aria-label="Required Week 8 preparation">
+            <div class="requirement-label">Required Week 8 preparation</div>
+            <h3>Complete the companion and bring your Agent Architecture Decision Card</h3>
+            <ol class="preparation-steps"><li>Complete Week 8 and its required media.</li><li>Answer all four final review questions correctly to unlock the download.</li><li>Complete the Word card and bring it to the seminar.</li></ol>
+            <p class="unlock-note">The self-checks are unmarked. The activity download remains locked until all four final answers are correct.</p>
+          </div>
           <div class="module-banner">
             <div><h3>Why should complexity come before architecture?</h3><p>Understand the work first, then choose the simplest architecture that can perform it reliably and within its authority.</p></div>
-            <svg viewBox="0 0 360 170" role="img" aria-label="Three architecture options: fixed workflow, one agent with skills, and coordinated specialist agents."><rect x="14" y="52" width="94" height="66" rx="10" fill="#fff"/><rect x="133" y="52" width="94" height="66" rx="10" fill="#ffe600"/><rect x="252" y="52" width="94" height="66" rx="10" fill="#fff"/><path d="M110 85 H127 M229 85 H246" stroke="#ffe600" stroke-width="5"/><path d="M123 78 L131 85 L123 92 M242 78 L250 85 L242 92" fill="none" stroke="#ffe600" stroke-width="4"/><text x="61" y="76" text-anchor="middle" font-size="12" font-weight="800" fill="#231f20"><tspan x="61">FIXED</tspan><tspan x="61" dy="17">WORKFLOW</tspan></text><text x="180" y="76" text-anchor="middle" font-size="12" font-weight="800" fill="#231f20"><tspan x="180">ONE AGENT</tspan><tspan x="180" dy="17">+ SKILLS</tspan></text><text x="299" y="68" text-anchor="middle" font-size="12" font-weight="800" fill="#231f20"><tspan x="299">COORDINATED</tspan><tspan x="299" dy="17">SPECIALIST</tspan><tspan x="299" dy="17">AGENTS</tspan></text></svg>
+            <figure class="module-banner-photo"><img src="assets/week-8-coordination.jpg" alt="A multidisciplinary team coordinating a complex workflow across shared displays and a process board." loading="lazy" decoding="async"></figure>
           </div>
           <div class="module-overview" id="w8-overview">
             <h3>What will you learn this week?</h3>
@@ -1134,12 +1252,13 @@
                 <p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=sWH0T4Zez6I" target="_blank" rel="noopener">open the video on YouTube ↗</a>.</p>
               </div>
             </div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="Complexity can come from tasks, information, pathways, memory, authority and coordination. The number of agents is an architecture choice made after diagnosing the work."><div class="question-number">Pause and check</div><h3>Does a complex agentic task automatically require multiple agents?</h3><div class="choices"><button class="choice">Yes. Every complex task should be divided among specialists.</button><button class="choice">No. One capable agent may still manage the complete task reliably.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="Complexity can come from tasks, information, pathways, memory, authority and coordination. The number of agents is an architecture choice made after diagnosing the work."><div class="question-number">Pause and check</div><h3>Does a complex agentic task automatically require multiple agents?</h3><div class="choices"><button class="choice">Yes. Every complex task should be divided among specialists.</button><button class="choice">No. One capable agent may still manage the complete task reliably.</button><button class="choice">Only when the task requires more than one external tool.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w8-skills" class="required-section" data-stage="2">
             <div class="journey-phase" data-phase="2">Package capabilities</div>
             <h2>Could a reusable skill absorb the complexity? <span class="section-time">About 6 min</span></h2>
+            <figure class="stage-image skills"><img src="assets/week-8-skills.jpg" alt="Three organised capability kits feeding into one central workspace." loading="lazy" decoding="async"><figcaption>A skill packages a repeatable capability so one agent can select and use it when appropriate.</figcaption></figure>
             <p>Week 7 introduced a skill as a reusable capability that can package instructions, approved knowledge, tools and a repeatable procedure. Week 8 uses that idea as an architecture choice: before creating another agent, ask whether the required specialisation could become a skill used by the existing agent.</p>
             <div class="callout"><strong>Concept and implementation are different.</strong> A skill is conceptually a reusable capability. Platforms may implement that capability through graphical configurations, workflows, instructions and resources, or files such as <code>SKILL.md</code>. The packaging varies while the design purpose remains the same.</div>
             <div class="skill-stack" aria-label="Relationship among a tool, skill, agent and multi-agent system">
@@ -1151,20 +1270,20 @@
             <div class="callout"><strong>Architecture principle:</strong> a new capability does not automatically require a new agent. Start by asking whether one agent can use a well-bounded skill reliably.</div>
 
             <h3>Why might a capability become a skill?</h3>
-            <div class="grid three">
+            <div class="grid three visual-sequence">
               <div class="card"><div class="icon-badge" aria-hidden="true">▣</div><h3>Package specialist work</h3><p>Keep a repeatable procedure, its approved guidance and its expected output together.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">↻</div><h3>Reuse it consistently</h3><p>Apply the same capability across relevant cases or agents without repeating the complete instruction each time.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">≡</div><h3>Keep the agent manageable</h3><p>Separate specialist procedures from the agent’s overall goal, routing and authority instructions.</p></div>
             </div>
             <div class="scenario-thread"><div class="scenario-label">Scenario decision 2</div><p><strong>Can the existing agent use several skills?</strong> The agent could use a technical-investigation skill, a billing-impact skill and a remediation-and-handover skill. Each would package its required information, approved guidance, procedure, output and escalation conditions. One capable agent could sequence the skills while retaining a coherent view of the enquiry.</p></div>
-            <div class="grid three">
+            <div class="grid three visual-sequence">
               <div class="card"><div class="icon-badge" aria-hidden="true">◉</div><h3>One agent, several skills</h3><p>The agent selects the capability that fits the case while maintaining the overall goal and context.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">◉◉</div><h3>Several agents, distinct skills</h3><p>Each specialist agent owns a bounded capability when separate context, permissions or responsibility are justified.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">→</div><h3>Fixed workflow with skills</h3><p>Routing is predetermined and each stage invokes the required reusable capability.</p></div>
             </div>
 
             <h3>What would a skill need to specify?</h3>
-            <div class="grid three">
+            <div class="grid three visual-sequence">
               <div class="card"><div class="icon-badge" aria-hidden="true">▶</div><h3>Trigger and inputs</h3><p>When the skill applies and what information it requires.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">⚙</div><h3>Procedure and resources</h3><p>What steps it follows and which approved knowledge or tools it may use.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">■</div><h3>Output and limits</h3><p>What it must produce and when it must stop, return an error or escalate.</p></div>
@@ -1192,7 +1311,7 @@ description: Use when a frontline employee receives a report of repeated interne
             <p>Consider a specialist agent when the work requires a separate goal, materially different instructions or context, distinct permissions, independent execution, a separate review point or evidence that specialisation improves quality, reliability or control.</p>
             <div class="callout"><strong>Review skills as privileged instructions.</strong> A skill can influence planning, tool use and actions. Organisations therefore need to review, approve and version the skill and restrict the information and tools it can use.</div>
             <p><strong>Optional reading, about 2 min:</strong> read only “Risks and safety”, concentrating on approval, trust and the permissions available to a skill. This extension is excluded from the required pathway time. <a href="https://developers.openai.com/api/docs/guides/tools-skills#risks-and-safety" target="_blank" rel="noopener">Open the safety section ↗</a></p>
-            <div class="quick-check section-check" data-answer="0" data-explanation="A reusable skill is the simpler option when it can package the specialist procedure without requiring a separate goal, context, permissions or responsibility boundary."><div class="question-number">Pause and check</div><h3>When should you consider adding a skill before adding another agent?</h3><div class="choices"><button class="choice">When one agent can reliably use the bounded capability within the same task context.</button><button class="choice">Whenever the capability contains more than one procedural step.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="A reusable skill is the simpler option when it can package the specialist procedure without requiring a separate goal, context, permissions or responsibility boundary."><div class="question-number">Pause and check</div><h3>When should you consider adding a skill before adding another agent?</h3><div class="choices"><button class="choice">When one agent can reliably use the bounded capability within the same task context.</button><button class="choice">Whenever the capability contains more than one procedural step.</button><button class="choice">When the capability would benefit from a different interface or visual identity.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w8-cases" class="required-section" data-stage="3">
@@ -1215,14 +1334,14 @@ description: Use when a frontline employee receives a report of repeated interne
               <div class="media-card"><div><div class="type">FOCUSED CASE READING · APPROX. 4 MIN</div><h3>UK utilities customer-service automation</h3><p>Read Section 5.4 for the workflow, pilot and results, then Section 5.5 for why the authors associate the hierarchical pattern with a stable, policy-constrained pipeline.</p></div><a href="https://www.techscience.com/jai/v8n1/67006/html" target="_blank" rel="noopener">Open the targeted sections ↗</a></div>
               <div class="media-guidance"><div class="type">READ WITH CAUTION</div><h3>What should you extract?</h3><ul><li>Which responsibilities were separated?</li><li>What information moved between components?</li><li>Where did employee refinement remain?</li><li>How small was the reported pilot, and what does that limit?</li></ul><p class="source-note">Harri Renney, Maxim Nethercott, Nathan Renney and Peter Hayes, <em>Journal on Artificial Intelligence</em>, 8, 231–257. <a href="https://doi.org/10.32604/jai.2026.078487" target="_blank" rel="noopener">DOI ↗</a></p></div>
             </div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="The Mars Rover case establishes the single-agent baseline: complex trade-offs can remain with one agent when the complete scenario can be considered coherently without specialist handovers."><div class="question-number">Pause and check</div><h3>Why does the Mars Rover case begin the progression?</h3><div class="choices"><button class="choice">It proves that single-agent systems always outperform multiple agents.</button><button class="choice">It shows that task complexity alone does not justify multiple agents.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="The Mars Rover case establishes the single-agent baseline: complex trade-offs can remain with one agent when the complete scenario can be considered coherently without specialist handovers."><div class="question-number">Pause and check</div><h3>Why does the Mars Rover case begin the progression?</h3><div class="choices"><button class="choice">It proves that single-agent systems always outperform multiple agents.</button><button class="choice">It shows that task complexity alone does not justify multiple agents.</button><button class="choice">It shows that rover decisions can be made without reasoning or trade-offs.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w8-multi" class="required-section" data-stage="3">
             <div class="journey-phase" data-phase="3">Compare architectures</div>
             <h2>Which architecture is justified? <span class="section-time">About 8 min · includes 5 min reading</span></h2>
             <div class="scenario-thread"><div class="scenario-label">Scenario decision 3</div><p><strong>Compare three plausible designs.</strong> Design A uses a fixed sequence of technical, billing and remediation stages. Design B extends the existing agent so it can select and sequence those skills. Design C introduces a coordinating agent that routes bounded work to technical-support and billing-remediation specialists. The number of stages alone cannot decide among them.</p></div>
-            <div class="grid three" role="group" aria-label="Comparison of a fixed workflow, one agent with skills and coordinated specialist agents.">
+            <div class="visual-options three" role="group" aria-label="Comparison of a fixed workflow, one agent with skills and coordinated specialist agents.">
               <div class="card"><div class="icon-badge" aria-hidden="true">1→2→3</div><h3>Design A: fixed workflow</h3><p>Use predetermined routing when the stages and decision rules are stable, repeatable and sufficiently predictable.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">◉</div><h3>Design B: one agent with skills</h3><p>Use one agent when judgement is required and it can select skills while maintaining the complete task context reliably.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">◉◉</div><h3>Design C: specialist agents</h3><p>Separate agents when distinct context, permissions, responsibility or independent work produces a demonstrable benefit.</p></div>
@@ -1245,15 +1364,16 @@ description: Use when a frontline employee receives a report of repeated interne
               <label for="w8-architecture-decision"><strong>Make the architecture decision.</strong> For the recurring-service-disruption scenario, choose a fixed workflow, one agent with skills or coordinated specialist agents. Give one reason for your choice and identify one condition that would cause you to reconsider it.</label>
               <textarea id="w8-architecture-decision" placeholder="I would choose… because… I would reconsider this choice if…"></textarea>
             </div>
-            <div class="quick-check section-check" data-answer="0" data-explanation="Multiple agents are justified only when specialisation creates a demonstrable improvement in quality, reliability, control or another relevant outcome that outweighs coordination costs."><div class="question-number">Pause and check</div><h3>What is the strongest justification for introducing multiple agents?</h3><div class="choices"><button class="choice">Evidence that specialisation provides sufficient value to outweigh added coordination costs.</button><button class="choice">The workflow contains several stages and therefore needs one agent per stage.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="Multiple agents are justified only when specialisation creates a demonstrable improvement in quality, reliability, control or another relevant outcome that outweighs coordination costs."><div class="question-number">Pause and check</div><h3>What is the strongest justification for introducing multiple agents?</h3><div class="choices"><button class="choice">Evidence that specialisation provides sufficient value to outweigh added coordination costs.</button><button class="choice">The workflow contains several stages and therefore needs one agent per stage.</button><button class="choice">Each specialist can use a different model, regardless of whether outcomes improve.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w8-patterns" class="required-section" data-stage="4">
             <div class="journey-phase" data-phase="4">Design coordination</div>
             <h2>How can multiple agents be coordinated? <span class="section-time">About 5 min</span></h2>
+            <figure class="stage-image compact"><img src="assets/week-8-coordination.jpg" alt="A multidisciplinary team coordinating connected work across shared displays and a process board." loading="lazy" decoding="async"><figcaption>Coordination requires shared context, explicit roles and a clear owner for the complete outcome.</figcaption></figure>
             <p>After specialist agents are justified, the architecture must specify how work is routed, what each role receives and produces, how control moves and how the overall outcome remains coherent.</p>
             <div class="scenario-thread"><div class="scenario-label">Scenario decision 4</div><p><strong>If Design C is selected, how should it operate?</strong> A coordinator could retain the employee interaction and call the appropriate specialist, or it could hand control to that specialist. The choice affects who owns the case context, how the output returns and where the employee reviews the recommendation.</p></div>
-            <div class="grid three">
+            <div class="grid three visual-sequence">
               <div class="card"><div class="mini-pattern" aria-hidden="true"><span>1</span><b>→</b><span>2</span><b>→</b><span>3</span></div><h3>Pre-defined workflow</h3><p>Sequence and routing rules are established in advance. It suits stable, repeatable and policy-constrained processes.</p></div>
               <div class="card"><div class="mini-pattern" aria-hidden="true"><span>A</span><b>←</b><span style="background:#806d00">M</span><b>→</b><span>B</span></div><h3>Manager pattern</h3><p>A coordinator implemented as a central agent selects specialists and combines their outputs while maintaining one overall interaction.</p></div>
               <div class="card"><div class="mini-pattern" aria-hidden="true"><span>A</span><b>⇒</b><span>B</span></div><h3>Handover pattern</h3><p>The active agent transfers task control to another agent whose capabilities better fit the situation.</p></div>
@@ -1262,7 +1382,7 @@ description: Use when a frontline employee receives a report of repeated interne
             <p><strong>Terminology:</strong> coordinator is the generic role responsible for directing or reconciling work. An orchestrator is a coordinating component. A manager pattern keeps control with a central agent, while a handover pattern transfers active control.</p>
             <h3>What must be defined at every handover?</h3>
             <p>A handover needs an explicit interface contract so that each participant knows what it will receive, what it must produce and what happens when the transfer is incomplete.</p>
-            <div class="grid three">
+            <div class="grid three visual-sequence">
               <div class="card"><div class="icon-badge" aria-hidden="true">↓</div><h3>Input</h3><p>The case information, status, uncertainty and prior actions that must be transferred.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">↑</div><h3>Output</h3><p>The format, evidence and confidence information the receiving agent or person requires.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">✓</div><h3>Acceptance and failure</h3><p>Who receives the output and when it should be accepted, returned, retried, escalated or stopped.</p></div>
@@ -1288,10 +1408,10 @@ description: Use when a frontline employee receives a report of repeated interne
             </div>
 
             <h3>Where should context and state live?</h3>
-            <div class="grid three">
-              <div class="card"><div class="icon-badge" aria-hidden="true">◎</div><h3>Shared case state</h3><p>The authoritative record of the goal, current stage, completed work, important facts and next responsibility.</p></div>
-              <div class="card"><div class="icon-badge" aria-hidden="true">◫</div><h3>Local context</h3><p>The information one specialist requires for its bounded responsibility.</p></div>
-              <div class="card"><div class="icon-badge" aria-hidden="true">↻</div><h3>Long-term memory</h3><p>Information retained across separate runs only when there is a justified purpose, permission and retention rule.</p></div>
+            <div class="state-layers" role="img" aria-label="Three layers of system information: shared case state for the complete workflow, local context for a specialist, and justified long-term memory across runs.">
+              <div class="state-layer"><strong>Shared case state</strong><span>The authoritative record of the goal, current stage, completed work, important facts and next responsibility.</span></div>
+              <div class="state-layer"><strong>Local specialist context</strong><span>The subset of information one specialist requires for its bounded responsibility.</span></div>
+              <div class="state-layer"><strong>Long-term memory</strong><span>Information retained across separate runs only when there is a justified purpose, permission and retention rule.</span></div>
             </div>
             <div class="callout"><strong>State ownership matters:</strong> if several components can independently alter the case record, the system may lose track of which information and status are authoritative.</div>
 
@@ -1308,13 +1428,13 @@ description: Use when a frontline employee receives a report of repeated interne
             </table>
 
             <h3>What should be visible across the complete workflow?</h3>
-            <div class="grid three">
+            <div class="grid three visual-sequence">
               <div class="card"><div class="icon-badge" aria-hidden="true">↦</div><h3>Routing and responsibility</h3><p>Which agent, skill or person handled each stage and why control transferred.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">◎</div><h3>Context, tools and outputs</h3><p>What each component received, which tools it used and what it produced.</p></div>
               <div class="card"><div class="icon-badge" aria-hidden="true">!</div><h3>Failure and intervention</h3><p>Where uncertainty or failure arose, what recovery occurred and where a person reviewed, approved or stopped the work.</p></div>
             </div>
             <div class="callout"><strong>System completion is separate from component completion.</strong> The orchestrator must determine whether the overall outcome has been reached, a limit has been encountered or a person must intervene.</div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="A component can finish its assigned task while the overall goal remains incomplete, inconsistent or blocked. The system needs shared state and an explicit completion decision."><div class="question-number">Pause and check</div><h3>If every specialist reports completion, is the overall workflow necessarily complete?</h3><div class="choices"><button class="choice">Yes. Component completion automatically establishes system completion.</button><button class="choice">No. The system must still determine whether the overall outcome was reached.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="A component can finish its assigned task while the overall goal remains incomplete, inconsistent or blocked. The system needs shared state and an explicit completion decision."><div class="question-number">Pause and check</div><h3>If every specialist reports completion, is the overall workflow necessarily complete?</h3><div class="choices"><button class="choice">Yes. Component completion automatically establishes system completion.</button><button class="choice">No. The system must still determine whether the overall outcome was reached.</button><button class="choice">Only when specialists complete their tasks in the originally planned order.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w8-platforms" class="optional-section" data-stage="5">
@@ -1330,10 +1450,11 @@ description: Use when a frontline employee receives a report of repeated interne
               </tbody>
             </table>
             <p><strong>Focused reading, about 2 min:</strong> read the “Tools for building declarative agents” table and compare the recommended use cases for no-code, low-code and pro-code approaches. <a href="https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-tool-comparison#tools-for-building-declarative-agents" target="_blank" rel="noopener">Open the comparison table ↗</a></p>
-            <div class="quick-check section-check" data-answer="0" data-explanation="Platform requirements should follow the selected architecture. A bounded no-code builder may be sufficient until the design genuinely requires routing, shared state, permissions and managed handovers."><div class="question-number">Pause and check</div><h3>What should determine the required sophistication of the platform?</h3><div class="choices"><button class="choice">The capabilities required by the justified architecture.</button><button class="choice">The number of advanced features advertised by the vendor.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="Platform requirements should follow the selected architecture. A bounded no-code builder may be sufficient until the design genuinely requires routing, shared state, permissions and managed handovers."><div class="question-number">Pause and check</div><h3>What should determine the required sophistication of the platform?</h3><div class="choices"><button class="choice">The capabilities required by the justified architecture.</button><button class="choice">The number of advanced features advertised by the vendor.</button><button class="choice">The level of technical sophistication the project team wants to demonstrate.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
           <section id="w8-knowledge-check" class="required-section" data-stage="6">
             <h2>How well do you understand complex agents? <span class="section-time">About 5 min</span></h2>
+            <figure class="stage-image compact skills"><img src="assets/week-8-skills.jpg" alt="Several modular capability kits converging on one central work area." loading="lazy" decoding="async"><figcaption>Review the Week 8 decision: fixed workflow, one capable agent with skills, or coordinated specialist agents?</figcaption></figure>
             <p>Use these four unmarked knowledge checks to apply ideas from across the week. Select one answer for each question to receive immediate feedback.</p>
             <div class="knowledge-checks">
               <div class="quick-check" data-answer="2" data-explanation="The restricted information and separate approval boundary provide a substantive reason for specialist separation. A coordinator can retain the overall case context while the billing specialist receives only the information and authority required for its bounded role.">
@@ -1381,6 +1502,13 @@ description: Use when a frontline employee receives a report of repeated interne
                 <div class="feedback" aria-live="polite"></div>
               </div>
             </div>
+            <div class="prep-download" id="w8-preparation-download" hidden>
+              <div class="prep-label">Required seminar preparation</div>
+              <h3>Prepare one item for the seminar</h3>
+              <p>Download and complete the <strong>Agent Architecture Decision Card</strong>. Start with your Week 7 agent candidate, or another bounded task, and introduce one change that makes the work more complex.</p>
+              <p>Bring the completed one-page card to the seminar. You will use it to explain and defend whether the task needs a fixed workflow, one capable agent, a reusable skill or multiple coordinated agents.</p>
+              <a id="w8-preparation-download-link" download>Download the Word template ↓</a>
+            </div>
           </section>
           <div class="week-recap">
             <h3>What should you take from Week 8?</h3>
@@ -1397,9 +1525,15 @@ description: Use when a frontline employee receives a report of repeated interne
             <h2 class="section-title">How can organisations put Responsible AI into action?</h2>
             <p>Responsible AI requires organisations to govern the complete system: technology, people, processes, controls and consequences.</p>
           </div>
+          <div class="preparation-requirement" role="note" aria-label="Required Week 9 preparation">
+            <div class="requirement-label">Required Week 9 preparation</div>
+            <h3>Complete the companion and bring your Responsible AI Action Record</h3>
+            <ol class="preparation-steps"><li>Complete Week 9 and its required media.</li><li>Answer all four final review questions correctly to unlock the download.</li><li>Complete the Word record and bring it to the seminar.</li></ol>
+            <p class="unlock-note">The self-checks are unmarked. The activity download remains locked until all four final answers are correct.</p>
+          </div>
           <div class="module-banner">
             <div><h3>How do principles become organisational action?</h3><p>Responsible AI connects values to stakeholders, harms, controls, accountable owners, monitoring and redress.</p></div>
-            <svg viewBox="0 0 360 170" role="img" aria-label="A shield protects people through layered responsible AI controls."><path d="M180 18 L282 50 V93 C282 130 238 153 180 164 C122 153 78 130 78 93 V50 Z" fill="#ffe600"/><path d="M180 38 L257 62 V94 C257 116 226 135 180 146 C134 135 103 116 103 94 V62 Z" fill="#fff"/><circle cx="180" cy="83" r="22" fill="#231f20"/><path d="M137 129 C142 105 158 96 180 96 C202 96 218 105 223 129" fill="#231f20"/><path d="M153 76 l17 17 38-45" fill="none" stroke="#ffe600" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <figure class="module-banner-photo"><img src="assets/week-9-governance.jpg" alt="A diverse organisational review group examining evidence and risks around an AI-enabled service." loading="lazy" decoding="async"></figure>
           </div>
           <div class="module-overview" id="w9-overview">
             <h3>What will you learn this week?</h3>
@@ -1421,19 +1555,10 @@ description: Use when a frontline employee receives a report of repeated interne
               <div class="principles-centre">Responsible organisational action</div>
               <div class="principle-tile principle-se">Reliability and safety</div><div class="principle-tile principle-s">Transparency and explainability</div><div class="principle-tile principle-sw">Contestability</div><div class="principle-tile principle-w">Accountability</div>
             </div>
-            <div class="grid two principle-cards">
-              <div class="card"><h3>Human, societal and environmental wellbeing</h3><p>AI should benefit individuals, society and the environment.</p></div>
-              <div class="card"><h3>Human-centred values</h3><p>AI should respect human rights, diversity and individual autonomy.</p></div>
-              <div class="card"><h3>Fairness</h3><p>AI should be inclusive and accessible and avoid unfair discrimination.</p></div>
-              <div class="card"><h3>Privacy protection and security</h3><p>AI should uphold privacy rights, data protection and security.</p></div>
-              <div class="card"><h3>Reliability and safety</h3><p>AI should operate reliably according to its intended purpose.</p></div>
-              <div class="card"><h3>Transparency and explainability</h3><p>People should know when AI significantly affects them and be able to understand its role.</p></div>
-              <div class="card"><h3>Contestability</h3><p>People should have a timely way to challenge significant AI uses or outcomes.</p></div>
-              <div class="card"><h3>Accountability</h3><p>People responsible across the AI lifecycle should be identifiable and accountable.</p></div>
-            </div>
+            <p class="source-note"><strong>Read the visual clockwise:</strong> begin with wellbeing and human-centred values, then examine fairness, privacy, reliability, transparency, contestability and accountability. The principles overlap and must be interpreted together for the organisational context.</p>
             <div class="callout"><strong>Principles state the desired outcome.</strong> Organisations still need to identify affected stakeholders, foreseeable harms, controls, accountable owners, evidence and pathways for redress.</div>
             <p><strong>Focused reading, about 4 min:</strong> read “About the AI Ethics Principles” and the eight principle descriptions from “Human, societal and environmental wellbeing” through “Accountability”. Skip the archived development resources. <a href="https://www.industry.gov.au/publications/australias-ai-ethics-principles#the-ai-ethics-principles" target="_blank" rel="noopener">Open the targeted principles ↗</a></p>
-            <div class="quick-check section-check" data-answer="1" data-explanation="Contestability concerns a timely way to challenge an AI use or outcome. Accountability concerns identifiable people who remain answerable for decisions across the lifecycle."><div class="question-number">Pause and check</div><h3>A person can identify who approved an AI system but has no practical way to challenge its decision. Which principle is most clearly missing?</h3><div class="choices"><button class="choice">Accountability</button><button class="choice">Contestability</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="Contestability concerns a timely way to challenge an AI use or outcome. Accountability concerns identifiable people who remain answerable for decisions across the lifecycle."><div class="question-number">Pause and check</div><h3>A person can identify who approved an AI system but has no practical way to challenge its decision. Which principle is most clearly missing?</h3><div class="choices"><button class="choice">Accountability</button><button class="choice">Contestability</button><button class="choice">Transparency and explainability</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w9-controls" class="required-section" data-stage="2">
@@ -1463,35 +1588,35 @@ description: Use when a frontline employee receives a report of repeated interne
             <h3>What should monitoring reveal?</h3>
             <div class="monitor-grid"><div><strong>Performance</strong>Is the system doing what was intended?</div><div><strong>Distribution of harm</strong>Who experiences errors or disadvantage?</div><div><strong>Control effectiveness</strong>Are safeguards operating and changing outcomes?</div><div><strong>Complaints and redress</strong>Can affected people be heard and supported?</div><div><strong>Thresholds</strong>When must use be escalated, paused or stopped?</div></div>
             <details><summary>Risk and harm are related but distinct</summary><div class="details-body"><p>A <strong>risk</strong> is the possibility of an unacceptable outcome. A <strong>harm</strong> is the negative consequence experienced by a person, organisation, community or society. Controls can target the probability of the event, the severity of the consequence, or both.</p></div></details>
-            <div class="quick-check section-check" data-answer="0" data-explanation="A control without an owner may exist on paper yet fail in operation. Ownership establishes who implements, reviews, escalates and remains answerable for it."><div class="question-number">Pause and check</div><h3>An organisation specifies a monthly bias review but assigns no role to perform or act on it. What is the immediate weakness?</h3><div class="choices"><button class="choice">The control has no accountable owner.</button><button class="choice">The organisation selected the wrong principle.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="A control without an owner may exist on paper yet fail in operation. Ownership establishes who implements, reviews, escalates and remains answerable for it."><div class="question-number">Pause and check</div><h3>An organisation specifies a monthly bias review but assigns no role to perform or act on it. What is the immediate weakness?</h3><div class="choices"><button class="choice">The control has no accountable owner.</button><button class="choice">The organisation selected the wrong principle.</button><button class="choice">The monitoring interval is automatically too long for every AI system.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w9-robocall" class="required-section" data-stage="3">
             <h2><span class="w9-section-icon" aria-hidden="true">☎</span>Who is responsible when synthetic media deceives? <span class="section-time">About 6 min · includes 3 min reading</span></h2>
             <div class="required-case-layout">
-              <article class="case"><div class="case-illustration safety" aria-hidden="true">☎</div><h3>AI-generated political robocall</h3><p><strong>The situation:</strong> An AI-generated imitation of Joe Biden’s voice encouraged recipients not to vote in the 2024 New Hampshire primary. Caller information was spoofed.</p><p><strong>What AI was used for:</strong> Synthetic voice made the message sound as though it came from a recognisable public figure.</p><p><strong>What happened next:</strong> US regulators investigated the communications chain and took enforcement action.</p></article>
+              <article class="case"><figure class="case-photo"><img src="assets/week-9-robocall.jpg" alt="Illustrative close view of a smartphone receiving an unknown call beside election material." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><div class="case-illustration safety" aria-hidden="true">☎</div><h3>AI-generated political robocall</h3><div class="case-mechanism" aria-label="The robocall pathway moved from synthetic voice generation, through spoofed telephone distribution, to voter deception and regulatory response."><div><span class="mechanism-icon" aria-hidden="true">◖</span><strong>Synthetic voice</strong><small>A recognisable public figure was imitated.</small></div><div><span class="mechanism-icon" aria-hidden="true">☎</span><strong>Spoofed distribution</strong><small>The call appeared to come from a trusted source.</small></div><div><span class="mechanism-icon" aria-hidden="true">!</span><strong>Public consequence</strong><small>Voters received deceptive election information.</small></div></div><p><strong>The situation:</strong> An AI-generated imitation of Joe Biden’s voice encouraged recipients not to vote in the 2024 New Hampshire primary. Caller information was spoofed.</p><p><strong>What AI was used for:</strong> Synthetic voice made the message sound as though it came from a recognisable public figure.</p><p><strong>What happened next:</strong> US regulators investigated the communications chain and took enforcement action.</p></article>
               <div class="case-anchor-trace"><h3>Trace responsibility through the case</h3><div class="case-trace-grid"><div class="case-trace-step"><strong>1 · Principle</strong><span>Transparency, human-centred values and accountability define the expected outcome.</span></div><div class="case-trace-step"><strong>2 · Stakeholders</strong><span>Voters, candidates, election officials and communications providers experience different consequences.</span></div><div class="case-trace-step"><strong>3 · Risk or harm</strong><span>Deception may interfere with informed political participation and public trust.</span></div><div class="case-trace-step"><strong>4 · Controls</strong><span>Authentication, disclosure, traceability and rapid response interrupt the pathway to harm.</span></div><div class="case-trace-step"><strong>5 · Owner</strong><span>Responsibility must be assigned across the sender and organisations transmitting the call.</span></div><div class="case-trace-step"><strong>6 · Monitor and redress</strong><span>Detect spoofing and complaints, preserve evidence, stop dissemination and communicate corrections.</span></div></div><p class="case-source"><strong>Read, about 3 min:</strong> the opening summary, “Background” and “Enforcement Bureau Action”. <a href="https://docs.fcc.gov/public/attachments/DOC-403529A1.pdf" target="_blank" rel="noopener">Open the focused FCC reading ↗</a></p></div>
             </div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="Disclosure helps recipients interpret synthetic media, while authentication, traceability and response mechanisms address spoofing, accountability and continuing dissemination across the communications chain."><div class="question-number">Pause and check</div><h3>Which response best addresses the robocall as a system-level problem?</h3><div class="choices"><button class="choice">Require the voice generator to display a warning to its operator before any audio can be created or exported.</button><button class="choice">Combine disclosure, caller authentication, traceability and rapid response.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="Disclosure helps recipients interpret synthetic media, while authentication, traceability and response mechanisms address spoofing, accountability and continuing dissemination across the communications chain."><div class="question-number">Pause and check</div><h3>Which response best addresses the robocall as a system-level problem?</h3><div class="choices"><button class="choice">Require the voice generator to display a warning to its operator before any audio can be created or exported.</button><button class="choice">Combine disclosure, caller authentication, traceability and rapid response.</button><button class="choice">Prohibit every use of synthetic speech, including authorised accessibility uses.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w9-bunnings" class="required-section" data-stage="3">
             <h2><span class="w9-section-icon" aria-hidden="true">◎</span>Can a legitimate purpose excuse weak governance? <span class="section-time">About 6 min · includes 3 min reading</span></h2>
             <div class="required-case-layout">
-              <article class="case"><div class="case-illustration public" aria-hidden="true">◎</div><h3>Bunnings facial recognition</h3><p><strong>The situation:</strong> Bunnings used facial-recognition technology for a limited security purpose.</p><p><strong>What AI was used for:</strong> The system compared facial images to help identify people of security concern.</p><p><strong>What happened next:</strong> The 2026 Tribunal decision accepted the limited purpose while affirming failures in notification and privacy governance.</p></article>
+              <article class="case"><figure class="case-photo"><img src="assets/week-9-facial-recognition.jpg" alt="Illustrative view of a ceiling security camera monitoring the entrance to a generic retail store." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><div class="case-illustration public" aria-hidden="true">◎</div><h3>Bunnings facial recognition</h3><div class="case-mechanism" aria-label="The facial-recognition pathway moved from camera capture, through comparison with a watchlist, to a security flag requiring governed human handling."><div><span class="mechanism-icon" aria-hidden="true">▣</span><strong>Capture</strong><small>A camera image creates biometric information.</small></div><div><span class="mechanism-icon" aria-hidden="true">◎</span><strong>Compare</strong><small>The system checks the image against people of security concern.</small></div><div><span class="mechanism-icon" aria-hidden="true">⚑</span><strong>Handle a match</strong><small>Notice, proportionality, access and review shape responsible use.</small></div></div><p><strong>The situation:</strong> Bunnings used facial-recognition technology for a limited security purpose.</p><p><strong>What AI was used for:</strong> The system compared facial images to help identify people of security concern.</p><p><strong>What happened next:</strong> The 2026 Tribunal decision accepted the limited purpose while affirming failures in notification and privacy governance.</p></article>
               <div class="case-anchor-trace"><h3>Complete the second half of the pathway</h3><p>The principle, stakeholders and harm are provided. Before opening the final three stages, predict what would turn these concerns into organisational action.</p><div class="case-trace-grid"><div class="case-trace-step"><strong>1 · Principle</strong><span>Privacy, transparency, fairness and accountability define responsible use.</span></div><div class="case-trace-step"><strong>2 · Stakeholders</strong><span>Customers, employees and people flagged by the system encounter different impacts.</span></div><div class="case-trace-step"><strong>3 · Risk or harm</strong><span>People may be identified or tracked without adequate notice or governance.</span></div><div class="case-trace-step prompt-step"><strong>4 · Controls</strong><span>What mechanisms would address necessity, notice, data use and review?</span><details><summary>Reveal one response</summary><div class="details-body">Assess necessity and proportionality, give clear notice, restrict data use and require meaningful review.</div></details></div><div class="case-trace-step prompt-step"><strong>5 · Owner</strong><span>Which organisational role should maintain these privacy and security controls?</span><details><summary>Reveal one response</summary><div class="details-body">Assign identifiable privacy and security owners with authority to review and change the use.</div></details></div><div class="case-trace-step prompt-step"><strong>6 · Monitor and redress</strong><span>What evidence and remedies would reveal whether the use remains acceptable?</span><details><summary>Reveal one response</summary><div class="details-body">Audit use and false matches, review complaints and provide correction or deletion pathways where required.</div></details></div></div><p class="case-source"><strong>Read, about 3 min:</strong> the complete short OAIC statement. <a href="https://www.oaic.gov.au/news/media-centre/oaic-statement-on-administrative-review-tribunals-bunnings-decision" target="_blank" rel="noopener">Open the OAIC statement ↗</a></p></div>
             </div>
-            <div class="quick-check section-check" data-answer="0" data-explanation="A legitimate objective does not settle whether the use is necessary, proportionate or governed responsibly. Notice, restricted data use, review and privacy accountability remain material."><div class="question-number">Pause and check</div><h3>What does acceptance of a legitimate security purpose establish?</h3><div class="choices"><button class="choice">The purpose may be valid, while the implementation still requires privacy and governance controls.</button><button class="choice">Once the purpose is accepted, transparency, proportionality and privacy controls are no longer material to the decision.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="A legitimate objective does not settle whether the use is necessary, proportionate or governed responsibly. Notice, restricted data use, review and privacy accountability remain material."><div class="question-number">Pause and check</div><h3>What does acceptance of a legitimate security purpose establish?</h3><div class="choices"><button class="choice">The purpose may be valid, while the implementation still requires privacy and governance controls.</button><button class="choice">Once the purpose is accepted, transparency, proportionality and privacy controls are no longer material to the decision.</button><button class="choice">The AI system becomes responsible for any security outcome it produces.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w9-uber" class="required-section" data-stage="3">
             <h2><span class="w9-section-icon" aria-hidden="true">◇</span>When does human oversight become an empty label? <span class="section-time">About 10 min · includes 4 min reading</span></h2>
             <div class="required-case-layout">
-              <article class="case"><div class="case-illustration safety" aria-hidden="true">◇</div><h3>Uber automated vehicle crash</h3><p><strong>The situation:</strong> An automated test vehicle struck and killed a pedestrian in Tempe, Arizona.</p><p><strong>What AI was used for:</strong> The automated driving system detected objects and attempted to classify them and predict their paths.</p><p><strong>What happened next:</strong> The system failed to classify and predict the pedestrian’s path correctly. Emergency braking did not occur, and the safety operator intervened too late.</p></article>
+              <article class="case"><div class="case-illustration safety" aria-hidden="true">◇</div><h3>Uber automated vehicle crash</h3><div class="case-mechanism" aria-label="The automated-driving pathway moved from sensing the road, through classification and path prediction, to an unsafe response and late human intervention."><div><span class="mechanism-icon" aria-hidden="true">⌾</span><strong>Sense</strong><small>The system detected an object in the roadway.</small></div><div><span class="mechanism-icon" aria-hidden="true">◇</span><strong>Classify and predict</strong><small>Its classification and path prediction changed repeatedly.</small></div><div><span class="mechanism-icon" aria-hidden="true">!</span><strong>Respond</strong><small>Emergency braking did not occur and intervention came too late.</small></div></div><p><strong>The situation:</strong> An automated test vehicle struck and killed a pedestrian in Tempe, Arizona.</p><p><strong>What AI was used for:</strong> The automated driving system detected objects and attempted to classify them and predict their paths.</p><p><strong>What happened next:</strong> The system failed to classify and predict the pedestrian’s path correctly. Emergency braking did not occur, and the safety operator intervened too late.</p></article>
               <div class="diagnostic-challenge"><h3>Diagnose the responsibility failure</h3><p>Apply the six-stage anchor yourself before opening the analysis.</p><div class="diagnostic-prompts"><div>Which principle and stakeholder interests were most consequential?</div><div>Which controls failed to interrupt the pathway to harm?</div><div>What should have triggered escalation, pausing or stopping?</div></div><details><summary>Reveal one defensible analysis</summary><div class="details-body"><p><strong>Principles and stakeholders:</strong> reliability and safety, accountability and human-centred values were material for pedestrians, road users, safety operators and the testing organisation.</p><p><strong>Controls and ownership:</strong> safe system design, emergency response, independent assurance and meaningful operator intervention required accountable system-safety and operational owners.</p><p><strong>Monitoring and response:</strong> incidents, near misses and operator disengagement should inform explicit escalation and stopping thresholds, followed by investigation and support for affected people.</p></div></details><p class="case-source"><strong>Key lesson:</strong> naming a human overseer does not create an effective control. The person also needs attention, information, authority, time and organisational support.</p><p><strong>Read, about 4 min:</strong> “Executive Summary” and “Probable Cause” in the report linked from the investigation page. <a href="https://www.ntsb.gov/investigations/pages/HWY18MH010.aspx" target="_blank" rel="noopener">Open the NTSB investigation ↗</a></p></div>
             </div>
             <div class="good-practice"><h3>What could responsible implementation look like?</h3><p>In a hypothetical redesign informed by the case, uncertain object classification would trigger a safe response rather than continued normal operation. The safety operator would receive clear hazard information, sufficient time and authority to intervene, and manageable monitoring conditions. Near misses and disengagement would be reviewed against predefined thresholds, with independent safety ownership able to pause testing.</p></div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="Human presence becomes a control only when the person can understand the situation, see relevant evidence, exercise judgement and intervene with sufficient authority and time."><div class="question-number">Pause and check</div><h3>Why was the presence of a safety operator insufficient by itself?</h3><div class="choices"><button class="choice">A human operator can never provide meaningful oversight of an automated vehicle under any operating conditions.</button><button class="choice">Presence alone did not ensure effective attention, information and timely intervention.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="Human presence becomes a control only when the person can understand the situation, see relevant evidence, exercise judgement and intervene with sufficient authority and time."><div class="question-number">Pause and check</div><h3>Why was the presence of a safety operator insufficient by itself?</h3><div class="choices"><button class="choice">A human operator can never provide meaningful oversight of an automated vehicle under any operating conditions.</button><button class="choice">Presence alone did not ensure effective attention, information and timely intervention.</button><button class="choice">The operator needed more general ethics training, regardless of the operating interface or intervention time.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w9-air-canada" class="optional-section" data-stage="3">
@@ -1511,16 +1636,17 @@ description: Use when a frontline employee receives a report of repeated interne
 
           <section id="w9-oversight" class="required-section" data-stage="4">
             <h2><span class="w9-section-icon" aria-hidden="true">👁</span>What makes human oversight meaningful? <span class="section-time">About 11 min · includes 5 min reading</span></h2>
+            <figure class="stage-image oversight"><img src="assets/week-9-oversight.jpg" alt="A trained employee examining system evidence while reaching toward a physical stop control as a colleague observes." loading="lazy" decoding="async"><figcaption>Human presence becomes oversight when the person can understand, judge and intervene in time.</figcaption></figure>
             <div class="callout"><strong>Link back to Australia’s AI Ethics Principles:</strong> human oversight is one way an organisation can put <a href="#w9-principles">human-centred values, fairness, reliability and safety, transparency, contestability and accountability</a> into operation. A person cannot provide meaningful oversight merely by appearing in the workflow.</div>
             <p>The person needs all six conditions below. If one is missing, the organisation should question whether human review is genuinely capable of preventing or responding to harm.</p>
-            <div class="grid three oversight-grid">
-              <div class="card oversight-card"><div class="icon-badge" aria-hidden="true">?</div><h3>Understand</h3><p>Know the system’s purpose, limitations and personal responsibilities.</p><span class="principle-link">Supports: transparency and explainability · accountability</span></div>
-              <div class="card oversight-card"><div class="icon-badge" aria-hidden="true">◉</div><h3>See</h3><p>Receive relevant information, warnings, uncertainty and emerging risks.</p><span class="principle-link">Supports: transparency and explainability · reliability and safety</span></div>
-              <div class="card oversight-card"><div class="icon-badge" aria-hidden="true">⚖</div><h3>Decide</h3><p>Exercise independent judgement without automatically accepting the output.</p><span class="principle-link">Supports: human-centred values · fairness</span></div>
-              <div class="card oversight-card"><div class="icon-badge" aria-hidden="true">■</div><h3>Act</h3><p>Have the authority, mechanism and time to intervene, override, escalate or stop.</p><span class="principle-link">Supports: contestability · accountability</span></div>
-              <div class="card oversight-card"><div class="icon-badge" aria-hidden="true">+</div><h3>Be supported</h3><p>Receive training, manageable workloads and organisational backing.</p><span class="principle-link">Supports: reliability and safety · accountability</span></div>
-              <div class="card oversight-card"><div class="icon-badge" aria-hidden="true">✓</div><h3>Be accountable</h3><p>Record and review decisions and interventions so the system can improve.</p><span class="principle-link">Supports: accountability · contestability</span></div>
-            </div>
+            <ol class="oversight-path" aria-label="Six conditions for meaningful human oversight">
+              <li><strong>Understand</strong><div>Know the system’s purpose, limitations and personal responsibilities.<small>Transparency and explainability · accountability</small></div></li>
+              <li><strong>See</strong><div>Receive relevant evidence, warnings, uncertainty and emerging risks.<small>Transparency and explainability · reliability and safety</small></div></li>
+              <li><strong>Decide</strong><div>Exercise independent judgement without automatically accepting the output.<small>Human-centred values · fairness</small></div></li>
+              <li><strong>Act</strong><div>Have the authority, mechanism and time to intervene, override, escalate or stop.<small>Contestability · accountability</small></div></li>
+              <li><strong>Be supported</strong><div>Receive training, manageable workloads and organisational backing.<small>Reliability and safety · accountability</small></div></li>
+              <li><strong>Be accountable</strong><div>Record and review decisions and interventions so the system can improve.<small>Accountability · contestability</small></div></li>
+            </ol>
             <div class="callout"><strong>Implementation choices:</strong> proceed, proceed with conditions, redesign or stop. The appropriate decision depends on the severity and reversibility of harm, the strength of controls, the evidence available and the organisation’s ability to remain accountable.</div>
             <div class="media-card"><div><div class="type">FOCUSED GUIDANCE · APPROX. 5 MIN</div><h3>Facial-recognition privacy risks</h3><p>Read only <strong>“Key points”</strong> and the <strong>“Entities should consider”</strong> checklist in Part A. Focus on privacy impact assessment, governance, human control, audit and complaint responsibilities.</p></div><a href="https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies/organisations/facial-recognition-technology-a-guide-to-assessing-the-privacy-risks#key-points" target="_blank" rel="noopener">Open the targeted guidance ↗</a></div>
             <div class="quick-check section-check" data-answer="3" data-explanation="Human oversight works only when the person can understand the system, see relevant evidence and uncertainty, exercise judgement, and intervene with sufficient authority and time.">
@@ -1531,6 +1657,7 @@ description: Use when a frontline employee receives a report of repeated interne
           </section>
           <section id="w9-knowledge-check" class="required-section" data-stage="5">
             <h2><span class="w9-section-icon" aria-hidden="true">✓</span>Can you govern an AI system responsibly? <span class="section-time">About 8 min</span></h2>
+            <figure class="stage-image compact"><img src="assets/week-9-governance.jpg" alt="An organisational review group examining evidence, risks and implementation conditions for an AI-enabled service." loading="lazy" decoding="async"><figcaption>A responsible implementation decision weighs benefit, harm, controls, ownership, evidence and redress together.</figcaption></figure>
             <p>These questions require you to connect principles, stakeholders, harms, controls, ownership, evidence and human oversight. Choose the strongest response.</p>
             <div class="knowledge-checks">
               <div class="quick-check" data-answer="3" data-explanation="Aggregate performance can conceal concentrated harm. Disaggregated outcomes, accessible complaints and an accountable owner provide evidence about who is affected and create a route to investigation and remedy.">
@@ -1550,6 +1677,13 @@ description: Use when a frontline employee receives a report of repeated interne
                 <div class="choices"><button class="choice">Proceed because the overall accuracy demonstrates sufficient reliability.</button><button class="choice">Proceed with conditions by adding a general notice at each entrance.</button><button class="choice">Redesign before implementation to address disparity, review, appeal and ownership.</button><button class="choice">Stop permanently because facial recognition can never have a legitimate use in any purpose or operating environment.</button></div><div class="feedback" aria-live="polite"></div>
                 <div class="decision-response"><label for="w9-decision-justification">Justify your decision in one sentence. Refer to the intended benefit, one material harm and one implementation condition.</label><textarea id="w9-decision-justification" placeholder="My decision is… because… Implementation should require…"></textarea><details><summary>What should a strong justification contain?</summary><div class="details-body"><p>A defensible response weighs the intended efficiency benefit against the unequal error rate and consequential lack of review. It identifies a condition such as disaggregated evidence, meaningful human review, an appeal pathway, an accountable owner or a stopping threshold.</p></div></details></div>
               </div>
+            </div>
+            <div class="prep-download" id="w9-preparation-download" hidden>
+              <div class="prep-label">Required seminar preparation</div>
+              <h3>Prepare one item for the seminar</h3>
+              <p>Download and complete the <strong>Responsible AI Action Record</strong>. Choose one AI case from Week 9, or another clearly described organisational AI use, and trace one material pathway from principle to implementation decision.</p>
+              <p>Bring the completed one-page record to the seminar. You will use it to explain your most important control, who owns it and what evidence would require intervention.</p>
+              <a id="w9-preparation-download-link" download>Download the Word template ↓</a>
             </div>
           </section>
           <div class="week-recap">
@@ -1615,7 +1749,7 @@ description: Use when a frontline employee receives a report of repeated interne
             <p>The material in this communication may be subject to copyright under the Act. Any further reproduction or communication of this material by you may be the subject of copyright protection under the Act.</p>
             <p><strong>Do not remove this notice.</strong></p>
           </aside>
-          <div class="creator-notice"><strong>INFS5706 AI in Action</strong> · Weeks 7–9 Study Companion<br>© Xavier Jusay, created with Codex. For enrolled students’ personal study use. Do not republish, reproduce, distribute, upload or share externally without explicit written permission.</div>
+          <div class="creator-notice"><strong>INFS5706 AI in Action</strong> · Weeks 7–9 Study Companion<br>© Xavier Jusay, created with Codex. Illustrative photographs were generated with AI and do not depict the real organisations or events discussed. For enrolled students’ personal study use. Do not republish, reproduce, distribute, upload or share externally without explicit written permission.</div>
         </div>
       </footer>
     </main>
@@ -1646,15 +1780,64 @@ description: Use when a frontline employee receives a report of repeated interne
       if (!buttons.length || !feedback) return;
       buttons.forEach((button, index) => {
         button.addEventListener('click', () => {
-          buttons.forEach((b, i) => {
-            b.disabled = true;
-            if (i === answer) b.classList.add('correct');
-          });
-          if (index !== answer) button.classList.add('incorrect');
-          feedback.textContent = (index === answer ? 'Correct. ' : 'Review this. ') + explanation;
+          buttons.forEach(b => b.classList.remove('incorrect'));
+          check.dataset.attempted = 'true';
+          if (index === answer) {
+            buttons.forEach(b => b.disabled = true);
+            button.classList.add('correct');
+            check.dataset.correct = 'true';
+            feedback.textContent = 'Correct. ' + explanation;
+          } else {
+            button.classList.add('incorrect');
+            button.disabled = true;
+            feedback.textContent = 'Review this and try again. ' + explanation;
+          }
+          document.dispatchEvent(new CustomEvent('knowledge-check-attempted', {detail:{check}}));
         });
       });
     });
+
+    const week7PreparationDownload = document.getElementById('w7-preparation-download');
+    const week7PreparationLink = document.getElementById('w7-preparation-download-link');
+    function updateWeek7PreparationDownload() {
+      const checks = [...document.querySelectorAll('#w7-knowledge-check .quick-check')];
+      const unlocked = localStorage.getItem('infs5706-w7-preparation-correct-v2') === 'true'
+        || (checks.length > 0 && checks.every(check => check.dataset.correct === 'true'));
+      if (!unlocked) return;
+      localStorage.setItem('infs5706-w7-preparation-correct-v2', 'true');
+      week7PreparationDownload.hidden = false;
+      week7PreparationLink.href = 'Week 7 Simple Agent Candidate Card.docx';
+    }
+    document.addEventListener('knowledge-check-attempted', updateWeek7PreparationDownload);
+    updateWeek7PreparationDownload();
+
+    const week8PreparationDownload = document.getElementById('w8-preparation-download');
+    const week8PreparationLink = document.getElementById('w8-preparation-download-link');
+    function updateWeek8PreparationDownload() {
+      const checks = [...document.querySelectorAll('#w8-knowledge-check .quick-check')];
+      const unlocked = localStorage.getItem('infs5706-w8-preparation-correct-v1') === 'true'
+        || (checks.length > 0 && checks.every(check => check.dataset.correct === 'true'));
+      if (!unlocked) return;
+      localStorage.setItem('infs5706-w8-preparation-correct-v1', 'true');
+      week8PreparationDownload.hidden = false;
+      week8PreparationLink.href = 'Week 8 Agent Architecture Decision Card.docx';
+    }
+    document.addEventListener('knowledge-check-attempted', updateWeek8PreparationDownload);
+    updateWeek8PreparationDownload();
+
+    const week9PreparationDownload = document.getElementById('w9-preparation-download');
+    const week9PreparationLink = document.getElementById('w9-preparation-download-link');
+    function updateWeek9PreparationDownload() {
+      const checks = [...document.querySelectorAll('#w9-knowledge-check .quick-check')];
+      const unlocked = localStorage.getItem('infs5706-w9-preparation-correct-v1') === 'true'
+        || (checks.length > 0 && checks.every(check => check.dataset.correct === 'true'));
+      if (!unlocked) return;
+      localStorage.setItem('infs5706-w9-preparation-correct-v1', 'true');
+      week9PreparationDownload.hidden = false;
+      week9PreparationLink.href = 'Week 9 Responsible AI Action Record.docx';
+    }
+    document.addEventListener('knowledge-check-attempted', updateWeek9PreparationDownload);
+    updateWeek9PreparationDownload();
 
     const glossaryInput = document.getElementById('glossary-search');
     const glossaryItems = [...document.querySelectorAll('.glossary-item')];
@@ -1686,7 +1869,6 @@ description: Use when a frontline employee receives a report of repeated interne
     const rail = document.querySelector('.rail');
     const guidedModeButton = document.getElementById('guided-mode-button');
     const referenceModeButton = document.getElementById('reference-mode-button');
-    const journeyModeNote = document.getElementById('journey-mode-note');
 
     const stagePlans = {
       week7: [
@@ -1714,6 +1896,76 @@ description: Use when a frontline employee receives a report of repeated interne
     };
 
     const activeStages = {week7:1, week8:1, week9:1};
+    let savedJourneyProgress = {};
+    try {
+      savedJourneyProgress = JSON.parse(localStorage.getItem('infs5706-journey-progress-correct-v2') || '{}');
+    } catch (error) {
+      localStorage.removeItem('infs5706-journey-progress-correct-v2');
+    }
+    const unlockedStages = {
+      week7: Math.max(1, Math.min(stagePlans.week7.length, Number(savedJourneyProgress.week7) || 1)),
+      week8: Math.max(1, Math.min(stagePlans.week8.length, Number(savedJourneyProgress.week8) || 1)),
+      week9: Math.max(1, Math.min(stagePlans.week9.length, Number(savedJourneyProgress.week9) || 1))
+    };
+    let weekCompletion = {};
+    try {
+      weekCompletion = JSON.parse(localStorage.getItem('infs5706-week-completion-v1') || '{}');
+    } catch (error) {
+      localStorage.removeItem('infs5706-week-completion-v1');
+    }
+    let startedWeeks = {};
+    try {
+      startedWeeks = JSON.parse(localStorage.getItem('infs5706-week-started-v1') || '{}');
+    } catch (error) {
+      localStorage.removeItem('infs5706-week-started-v1');
+    }
+
+    function updateWeekCompletionIndicator() {
+      document.querySelectorAll('[data-completion-week]').forEach(row => {
+        const weekKey = row.dataset.completionWeek;
+        const complete = weekCompletion[weekKey] === true;
+        const stage = unlockedStages[weekKey] || 1;
+        const total = stagePlans[weekKey].length;
+        const status = row.querySelector('.week-status');
+        const mark = row.querySelector('.week-mark');
+        row.classList.toggle('complete', complete);
+        status.textContent = complete ? 'Complete' : startedWeeks[weekKey] ? `Stage ${stage} of ${total}` : 'Ready to start';
+        mark.textContent = complete ? '✓' : startedWeeks[weekKey] ? '●' : '○';
+      });
+    }
+
+    function checkForWeeklyCompletion(weekKey) {
+      const finalStage = stagePlans[weekKey].length;
+      const checks = stageChecks(weekKey, finalStage);
+      if (checks.length && checks.every(check => check.dataset.correct === 'true')) {
+        weekCompletion[weekKey] = true;
+        localStorage.setItem('infs5706-week-completion-v1', JSON.stringify(weekCompletion));
+      }
+      updateWeekCompletionIndicator();
+    }
+
+    function saveJourneyProgress() {
+      localStorage.setItem('infs5706-journey-progress-correct-v2', JSON.stringify(unlockedStages));
+    }
+
+    function unlockStage(weekKey, stageNumber) {
+      if (!stagePlans[weekKey]) return;
+      unlockedStages[weekKey] = Math.max(unlockedStages[weekKey], Math.min(stageNumber, stagePlans[weekKey].length));
+      saveJourneyProgress();
+      updateWeekCompletionIndicator();
+    }
+
+    function stageChecks(weekKey, stageNumber) {
+      const view = document.getElementById(weekKey);
+      if (!view) return [];
+      return [...view.querySelectorAll(`section.required-section[data-stage="${stageNumber}"] .quick-check`)]
+        .filter(check => getComputedStyle(check).display !== 'none');
+    }
+
+    function stageReady(weekKey, stageNumber) {
+      const checks = stageChecks(weekKey, stageNumber);
+      return checks.every(check => check.dataset.correct === 'true');
+    }
 
     function weekKeyForView(view) {
       return view && stagePlans[view.id] ? view.id : null;
@@ -1728,10 +1980,13 @@ description: Use when a frontline employee receives a report of repeated interne
       stagePlans[weekKey].forEach((stage, index) => {
         const button = document.createElement('button');
         const number = index + 1;
+        const locked = number > unlockedStages[weekKey];
         button.type = 'button';
         button.classList.toggle('complete', number < currentStage);
         button.classList.toggle('current', number === currentStage);
-        button.setAttribute('aria-label', `Go to stage ${number}: ${stage.title}`);
+        button.classList.toggle('locked', locked);
+        button.disabled = locked;
+        button.setAttribute('aria-label', locked ? `Stage ${number} locked: ${stage.title}` : `Go to stage ${number}: ${stage.title}`);
         if (number === currentStage) button.setAttribute('aria-current', 'step');
         button.addEventListener('click', () => showStage(weekKey, number));
         progress.append(button);
@@ -1740,41 +1995,35 @@ description: Use when a frontline employee receives a report of repeated interne
     }
 
     function renderWeekStart(view) {
-      document.querySelectorAll('.guided-start').forEach(item => item.remove());
+      document.querySelectorAll('.guided-start, .guided-start-next').forEach(item => item.remove());
       if (!document.body.classList.contains('guided-mode')) return;
       const weekKey = weekKeyForView(view);
       if (!weekKey) return;
-      const anchor = view.querySelector('.time-note') || view.querySelector('.module-overview');
-      if (!anchor) return;
-      const start = document.createElement('div');
-      start.className = 'guided-start';
-      const stageCount = stagePlans[weekKey].length;
-      start.innerHTML = `<h3>Follow this week as a ${stageCount}-stage journey</h3><p>Each stage introduces one decision, applies it to the running scenario and carries an output into the next stage.</p>`;
-      const grid = document.createElement('div');
-      grid.className = 'guided-start-grid';
-      stagePlans[weekKey].forEach((stage, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.innerHTML = `${index + 1} · ${stage.title}<small>${stage.output}</small>`;
-        button.addEventListener('click', () => showStage(weekKey, index + 1));
-        grid.append(button);
-      });
-      start.append(grid);
       const nextButton = document.createElement('button');
       nextButton.type = 'button';
       nextButton.className = 'guided-start-next';
       nextButton.textContent = 'Go to next section →';
       nextButton.setAttribute('aria-label', `Go to next section: ${stagePlans[weekKey][0].title}`);
       nextButton.addEventListener('click', () => showStage(weekKey, 1));
-      start.append(nextButton);
-      anchor.insertAdjacentElement('afterend', start);
+      const scenario = Array.from(view.children).find(item => item.classList.contains('scenario-thread'));
+      const scenarioArc = Array.from(view.children).find(item => item.classList.contains('scenario-arc'));
+      const scenarioBoundary = scenarioArc || scenario;
+      if (scenarioBoundary) scenarioBoundary.insertAdjacentElement('afterend', nextButton);
+      else (view.querySelector('.time-note') || view.querySelector('.module-overview')).insertAdjacentElement('afterend', nextButton);
     }
 
     function showStage(weekKey, stageNumber, updateHistory = true) {
       const view = document.getElementById(weekKey);
+      if (document.body.classList.contains('guided-mode') && stageNumber > unlockedStages[weekKey]) {
+        stageNumber = unlockedStages[weekKey];
+      }
       const plan = stagePlans[weekKey] && stagePlans[weekKey][stageNumber - 1];
       if (!view || !plan) return;
+      view.classList.add('stage-active');
+      startedWeeks[weekKey] = true;
+      localStorage.setItem('infs5706-week-started-v1', JSON.stringify(startedWeeks));
       activeStages[weekKey] = stageNumber;
+      updateWeekCompletionIndicator();
       document.querySelectorAll('.stage-guide, .stage-footer').forEach(item => item.remove());
       view.querySelectorAll('section[data-stage]').forEach(section => {
         section.classList.toggle('active-stage', Number(section.dataset.stage) === stageNumber);
@@ -1801,13 +2050,47 @@ description: Use when a frontline employee receives a report of repeated interne
       if (!isLast) {
         const next = stagePlans[weekKey][stageNumber];
         nextButton.textContent = `Continue to ${next.title} →`;
-        nextButton.addEventListener('click', () => showStage(weekKey, stageNumber + 1));
+        nextButton.disabled = !stageReady(weekKey, stageNumber);
+        nextButton.addEventListener('click', () => {
+          if (!stageReady(weekKey, stageNumber)) return;
+          unlockStage(weekKey, stageNumber + 1);
+          showStage(weekKey, stageNumber + 1);
+        });
       } else {
         const nextWeek = weekKey === 'week7' ? 'week8' : weekKey === 'week8' ? 'week9' : null;
         nextButton.textContent = nextWeek ? `Continue to ${nextWeek.replace('week','Week ')} →` : 'Return to the overview ↑';
-        nextButton.addEventListener('click', () => showView(nextWeek ? `w${nextWeek.slice(-1)}-overview` : 'overview'));
+        nextButton.disabled = !stageReady(weekKey, stageNumber);
+        nextButton.addEventListener('click', () => {
+          if (!stageReady(weekKey, stageNumber)) return;
+          showView(nextWeek ? `w${nextWeek.slice(-1)}-overview` : 'overview');
+        });
       }
       footer.append(nextButton);
+      {
+        const gateStatus = document.createElement('div');
+        gateStatus.className = 'stage-gate-status';
+        const refreshGate = () => {
+          const checks = stageChecks(weekKey, stageNumber);
+          const correct = checks.filter(check => check.dataset.correct === 'true').length;
+          const ready = correct === checks.length;
+          nextButton.disabled = !ready;
+          gateStatus.classList.toggle('ready', ready);
+          gateStatus.textContent = ready
+            ? 'Ready to continue.'
+            : `Answer ${checks.length - correct} remaining knowledge ${checks.length - correct === 1 ? 'check' : 'checks'} correctly to unlock Continue.`;
+        };
+        footer.querySelector('p').append(gateStatus);
+        refreshGate();
+        const gateListener = event => {
+          if (!footer.isConnected) {
+            document.removeEventListener('knowledge-check-attempted', gateListener);
+            return;
+          }
+          if (event.detail.check.closest(`#${weekKey}`)) refreshGate();
+          if (event.detail.check.closest(`#${weekKey}`)) checkForWeeklyCompletion(weekKey);
+        };
+        document.addEventListener('knowledge-check-attempted', gateListener);
+      }
       const footerAnchor = isLast
         ? (view.querySelector('.week-recap') || stageSections[stageSections.length - 1])
         : stageSections[stageSections.length - 1];
@@ -1826,10 +2109,9 @@ description: Use when a frontline employee receives a report of repeated interne
       referenceModeButton.classList.toggle('active', !guided);
       guidedModeButton.setAttribute('aria-pressed', String(guided));
       referenceModeButton.setAttribute('aria-pressed', String(!guided));
-      journeyModeNote.textContent = guided ? 'One stage is shown at a time. Use Continue to follow the intended learning journey.' : 'All sections are visible for revision and reference.';
       if (!guided) progressCard.hidden = true;
       localStorage.setItem('infs5706-reading-mode', mode);
-      document.querySelectorAll('.guided-start, .stage-guide, .stage-footer').forEach(item => item.remove());
+      document.querySelectorAll('.guided-start, .guided-start-next, .stage-guide, .stage-footer').forEach(item => item.remove());
       const activeView = document.querySelector('.page-view.active-view');
       const weekKey = weekKeyForView(activeView);
       if (guided && weekKey) {
@@ -1857,6 +2139,15 @@ description: Use when a frontline employee receives a report of repeated interne
         link.classList.toggle('active', isActive);
         if (isActive) link.setAttribute('aria-current', 'location');
         else link.removeAttribute('aria-current');
+      });
+
+      navLinks.forEach(link => {
+        const group = link.closest('.nav-group');
+        const groupKey = group && group.dataset.group;
+        const stageNumber = Number(link.dataset.stageLink || 0);
+        const locked = document.body.classList.contains('guided-mode') && unlockedStages[groupKey] && stageNumber > unlockedStages[groupKey];
+        link.classList.toggle('locked-stage', Boolean(locked));
+        link.setAttribute('aria-disabled', String(Boolean(locked)));
       });
 
       const activeGroup = activeLink.closest('.nav-group');
@@ -1940,7 +2231,7 @@ description: Use when a frontline employee receives a report of repeated interne
       const view = target.closest('.page-view') || document.getElementById('overview');
 
       pageViews.forEach(item => item.classList.toggle('active-view', item === view));
-      document.querySelectorAll('.guided-start, .stage-guide, .stage-footer').forEach(item => item.remove());
+      document.querySelectorAll('.guided-start, .guided-start-next, .stage-guide, .stage-footer').forEach(item => item.remove());
       const weekKey = weekKeyForView(view);
       const guided = document.body.classList.contains('guided-mode');
       const targetStage = target.dataset.stage ? Number(target.dataset.stage) : null;
@@ -1948,6 +2239,7 @@ description: Use when a frontline employee receives a report of repeated interne
       else {
         activateNavLink(target.id, true);
         if (guided && weekKey) {
+          view.classList.remove('stage-active');
           view.classList.remove('final-stage');
           view.querySelectorAll('section[data-stage]').forEach(section => section.classList.remove('active-stage'));
           renderWeekStart(view);
@@ -1967,12 +2259,21 @@ description: Use when a frontline employee receives a report of repeated interne
         const targetId = link.getAttribute('href').slice(1);
         if (!document.getElementById(targetId)) return;
         event.preventDefault();
+        const target = document.getElementById(targetId);
+        const targetView = target.closest('.page-view');
+        const targetWeek = weekKeyForView(targetView);
+        const targetStage = Number(target.dataset.stage || 0);
+        if (document.body.classList.contains('guided-mode') && targetWeek && targetStage > unlockedStages[targetWeek]) {
+          showStage(targetWeek, unlockedStages[targetWeek]);
+          return;
+        }
         showView(targetId);
       });
     });
 
-    const savedMode = localStorage.getItem('infs5706-reading-mode');
-    setReadingMode(savedMode === 'reference' ? 'reference' : 'guided');
+    localStorage.setItem('infs5706-reading-mode', 'guided');
+    setReadingMode('guided');
+    updateWeekCompletionIndicator();
     window.addEventListener('popstate', () => showView(location.hash.slice(1) || 'overview', false));
     showView(location.hash.slice(1) || 'overview', false);
   </script>

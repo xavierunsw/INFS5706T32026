@@ -570,6 +570,63 @@
     .creator-notice { padding-top:18px; border-top:1px solid #666; font-size:.9rem; }
     .top-button { position:fixed; right:20px; bottom:20px; background:var(--yellow); color:#111; border:2px solid #231f20; border-radius:0; width:48px; height:48px; font-size:1.2rem; font-weight:900; cursor:pointer; box-shadow:var(--shadow); display:none; }
     .top-button.show { display:block; }
+
+    /* UNSW Web Guide inspired visual system */
+    :root { --page:#ffffff; --blue-pale:#dceff2; --pink-pale:#f9e8eb; --orange-pale:#fff0dc; }
+    .brand-lockup { margin:-28px -22px 24px; padding:16px 20px; background:#fff; border-bottom:1px solid #d8d8d8; }
+    .brand-lockup img { display:block; width:128px; max-width:100%; height:auto; }
+    .rail { background:#f3f3f3; color:#231f20; border-right:1px solid #d8d8d8; }
+    .rail .eyebrow { color:#231f20; }
+    .rail .sub { color:#555; }
+    .week-switcher a { border:1px solid #b8b8b8; color:#231f20; background:#fff; }
+    .week-switcher a:hover, .week-switcher a.active { background:var(--yellow); border-color:#231f20; color:#231f20; }
+    .week-completion { background:#fff; border:1px solid #c8c8c8; }
+    .week-completion > strong, .week-completion-row { color:#231f20; }
+    .week-completion-row .week-label { color:#231f20; }
+    .week-completion-row .week-status { color:#555; }
+    .progress-card { background:#fff; border-color:#c8c8c8; color:#231f20; }
+    .progress-track { background:#d8d8d8; }
+    .nav-group { border-top:1px solid #d3d3d3; }
+    .nav-group-link { color:#231f20 !important; padding:.72rem .45rem !important; }
+    .nav-group-link:hover { color:#231f20 !important; background:#e5e5e5 !important; }
+    .rail nav a { color:#231f20; padding:.62rem .8rem; }
+    .rail nav a:hover, .rail nav a.active { background:var(--yellow); color:#231f20; border-left-color:#231f20; }
+    .nav-section-links a.locked-stage { color:#777; }
+    .rail-note { background:#fff; border-color:#c8c8c8; color:#333; }
+    .hero { min-height:300px; padding:66px clamp(24px,6vw,92px) 104px; background:var(--yellow); clip-path:polygon(0 0,100% 0,100% 72%,88% 100%,0 86%); }
+    .hero::after { display:none; }
+    .hero h2, .hero p { width:min(850px,calc(100% - 240px)); }
+    .hero-brand { box-shadow:0 4px 12px rgba(0,0,0,.12); }
+    .content { max-width:1180px; padding-top:54px; }
+    .orientation { padding:0; box-shadow:none; }
+    .module-head { margin:0 0 34px; padding:42px 48px 62px; border:0; background:var(--yellow); clip-path:polygon(0 0,100% 0,100% 72%,88% 100%,0 88%); }
+    .module-head .week { padding:0; background:transparent; letter-spacing:.11em; }
+    .module-head p { color:#231f20; }
+    .module-banner { background:var(--blue-pale); color:#231f20; border:0; }
+    .module-banner h3 { color:#231f20; }
+    .module-banner p { color:#333; }
+    .module-overview { background:var(--blue-pale); color:#231f20; border:0; padding:30px 32px; }
+    .module-overview h3, .module-overview strong { color:#231f20; }
+    .module-overview p { color:#333; }
+    .module > section[data-stage] { padding:clamp(26px,4vw,42px); }
+    .module > section[data-stage]:nth-of-type(3n+1) { background:#fff; }
+    .module > section[data-stage]:nth-of-type(3n+2) { background:var(--pink-pale); }
+    .module > section[data-stage]:nth-of-type(3n) { background:var(--orange-pale); }
+    .stage-guide { border-top:0; border-left:10px solid var(--yellow); box-shadow:none; background:var(--blue-pale); }
+    .stage-output { background:#fff; }
+    .scenario-thread { grid-template-columns:170px 1fr; gap:22px; padding:24px 26px; background:#231f20; color:#fff; border:0; border-left:10px solid var(--yellow); box-shadow:none; }
+    .scenario-thread p { color:#fff; }
+    .scenario-thread strong { color:#fff; }
+    .scenario-thread a { color:#fff; }
+    .scenario-arc { padding:24px; background:#231f20; border-bottom:8px solid var(--yellow); }
+    .scenario-arc > div { background:#333; border:1px solid #696969; border-top:8px solid var(--yellow); }
+    .scenario-arc strong, .scenario-arc p { color:#fff; }
+    .scenario-arc > div:not(:last-child)::after { color:var(--yellow); }
+    .card, .case, .diagram, details, .authority-visual, .run-step, .spectrum > div { border-radius:0; box-shadow:none; }
+    .case { border:0; border-top:8px solid var(--yellow); }
+    .preparation-requirement { box-shadow:none; }
+    .stage-footer { background:var(--blue-pale); border-top:0; }
+    footer { background:#191919; color:#fff; }
     @media (max-width:900px) {
       .app-shell { display:block; }
       .rail { position:relative; height:auto; padding:20px; }
@@ -687,6 +744,7 @@
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="app-shell">
     <aside class="rail" aria-label="Study companion navigation">
+      <div class="brand-lockup"><img src="https://www.unsw.edu.au/content/dam/images/unsw-wide/general/branding/2022-12-brand/sydney-landscape.cropimg.width=1920.png" alt="UNSW Sydney"></div>
       <div class="eyebrow">INFS5706 · AI IN ACTION</div>
       <h1>Weeks 7–9</h1>
       <div class="sub">Agentic AI and Responsible AI</div>

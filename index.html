@@ -2326,6 +2326,10 @@ description: Use when a frontline employee receives a report of repeated interne
       if (updateHistory) history.pushState({targetId:target.id}, '', '#' + target.id);
       requestAnimationFrame(() => {
         view.querySelectorAll('.reveal-section').forEach(section => revealObserver.observe(section));
+        if (view.id === 'overview') {
+          window.scrollTo({top:0, behavior:updateHistory ? 'smooth' : 'auto'});
+          return;
+        }
         const destination = guided && targetStage ? view.querySelector('.stage-guide') : target;
         destination.scrollIntoView({behavior:'smooth', block:'start'});
       });

@@ -53,6 +53,14 @@
       left:16px; top:12px; z-index:99; background:#fff; color:#000;
       padding:10px 14px; border-radius:8px;
     }
+    .page-reading-progress {
+      position:fixed; z-index:90; top:0; left:290px; right:0; height:7px;
+      background:rgba(35,31,32,.18); pointer-events:none;
+    }
+    .page-reading-progress span {
+      display:block; width:0; height:100%; background:var(--yellow);
+      box-shadow:0 0 0 1px rgba(35,31,32,.18); transition:width .1s linear;
+    }
     .app-shell { display:grid; grid-template-columns:290px minmax(0,1fr); min-height:100vh; }
     .rail {
       position:sticky; top:0; height:100vh; overflow:auto;
@@ -64,10 +72,6 @@
     .week-switcher { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:0 0 1.15rem; }
     .week-switcher a { display:grid; place-items:center; min-height:42px; border:1px solid #777; color:#fff; text-decoration:none; font-size:.78rem; font-weight:900; }
     .week-switcher a:hover, .week-switcher a.active { background:var(--yellow); border-color:var(--yellow); color:#231f20; }
-    .view-mode { display:none; }
-    .view-mode button { min-height:40px; border:1px solid #777; background:transparent; color:#fff; font:800 .76rem/1.2 inherit; cursor:pointer; }
-    .view-mode button:hover, .view-mode button.active { background:#fff; border-color:#fff; color:#231f20; }
-    #reference-mode-button { display:none; }
     .progress-card { margin:0 0 1rem; padding:.8rem; border:1px solid #666; color:#fff; }
     .progress-card strong { display:block; font-size:.82rem; margin-bottom:.45rem; }
     .progress-track { height:7px; background:#555; overflow:hidden; }
@@ -106,8 +110,10 @@
     .page-view { display:none; }
     .page-view.active-view { display:block; animation:view-in .22s ease-out; }
     @keyframes view-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-    .reveal-section { opacity:0; transform:translateY(28px); transition:opacity .55s ease, transform .55s ease; }
-    .reveal-section.is-visible { opacity:1; transform:none; }
+    .scroll-reveal { --reveal-offset:22px; opacity:0; transform:translateY(var(--reveal-offset)); transition:opacity .42s ease, transform .5s cubic-bezier(.2,.7,.25,1); will-change:opacity,transform; }
+    .scroll-reveal.reveal-from-up { --reveal-offset:-22px; }
+    .scroll-reveal.reveal-from-down { --reveal-offset:22px; }
+    .scroll-reveal.is-visible { opacity:1; transform:translateY(0); }
     .orientation, .module, .glossary, .sources { scroll-margin-top:20px; }
     .orientation { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:30px; margin-bottom:40px; }
     .section-label { color:#655500; font-weight:900; letter-spacing:.09em; font-size:1rem; line-height:1.25; text-transform:uppercase; }
@@ -121,6 +127,7 @@
     .optional-section::before { content:"Optional depth · excluded from the required pathway"; background:#ececec; color:#4a4a4a; }
     .case.optional-depth { background:#f6f6f6; border-color:#aaa; }
     .case.optional-depth::before { content:"Optional depth"; display:inline-block; margin-bottom:.5rem; padding:.2rem .42rem; background:#e4e4e4; color:#4a4a4a; font-size:.68rem; font-weight:900; letter-spacing:.07em; text-transform:uppercase; }
+    .case-forward-note { margin:1rem 0 0; padding:.75rem .85rem; background:#fff7bf; border-left:5px solid var(--yellow); color:#231f20; }
     .module { margin-top:58px; }
     .module > section + section { margin-top:clamp(54px,7vw,78px); }
     .module-head { border-top:8px solid var(--yellow); padding-top:22px; margin-bottom:22px; }
@@ -202,8 +209,17 @@
     .nav-section-links a.locked-stage::after { content:" \1F512"; font-size:.72rem; }
     body.guided-mode .module > section[data-stage] { display:none; }
     body.guided-mode .module > section[data-stage].active-stage { display:block; }
-    body.guided-mode .reveal-section { opacity:1; transform:none; }
-    body.guided-mode .module > section.optional-section { display:none; }
+    body.guided-mode .module.stage-active > section.active-stage ~ section.active-stage { margin-top:30px; }
+    body.guided-mode #w8-cases.active-stage { padding-bottom:12px; }
+    body.guided-mode #w8-multi.active-stage { margin-top:0; padding-top:12px; }
+    body.guided-mode #w8-multi.active-stage > h2:first-of-type { margin-top:0; }
+    body.guided-mode #w9-controls.active-stage { padding-bottom:14px; }
+    body.guided-mode #w9-safeguards.active-stage { margin-top:0; padding-top:14px; padding-bottom:14px; }
+    body.guided-mode #w9-monitoring.active-stage { margin-top:0; padding-top:14px; }
+    body.guided-mode #w9-safeguards.active-stage > h2:first-of-type,
+    body.guided-mode #w9-monitoring.active-stage > h2:first-of-type { margin-top:0; }
+    body.guided-mode .module > section[data-stage].optional-section { display:none; }
+    body.guided-mode .module > section[data-stage].optional-section.active-stage { display:block; }
     body.guided-mode .week-journey,
     body.guided-mode .journey-intro { display:none; }
     body.guided-mode .required-section::before,
@@ -230,9 +246,8 @@
     body.guided-mode #w9-oversight .section-check { display:block; }
     body.guided-mode .case-grid { grid-template-columns:1fr; }
     body.guided-mode .module:not(.final-stage) > .week-recap,
+    body.guided-mode .module:not(.final-stage) > .seminar-celebration,
     body.guided-mode .week-transition { display:none; }
-    body.reference-mode .stage-guide, body.reference-mode .stage-footer { display:none; }
-    body.reference-mode .module > section[data-stage] { display:block; }
     .module > section > p { max-width:75ch; }
     .media-lesson { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr); gap:20px; align-items:start; margin:24px 0; padding:20px; background:#fff; border:1px solid var(--line); box-shadow:0 6px 16px rgba(0,0,0,.06); }
     .media-lesson, .reading-lesson { position:relative; padding-top:54px; }
@@ -294,7 +309,7 @@
     .authority-axis small { display:block; color:var(--muted); font-weight:700; margin-top:8px; }
     details { background:#fff; border:1px solid var(--line); border-radius:14px; margin:12px 0; overflow:hidden; }
     summary { cursor:pointer; padding:17px 20px; font-weight:800; color:var(--navy); }
-    summary::before { content:"Explore further"; display:inline-block; margin-right:.65rem; padding:.18rem .38rem; background:var(--yellow); color:#231f20; font-size:.66rem; line-height:1.2; letter-spacing:.05em; text-transform:uppercase; vertical-align:.08rem; }
+    summary::before { content:"More detail"; display:inline-block; margin-right:.65rem; padding:.18rem .38rem; background:var(--yellow); color:#231f20; font-size:.66rem; line-height:1.2; letter-spacing:.05em; text-transform:uppercase; vertical-align:.08rem; }
     details[open] summary { background:var(--blue-soft); }
     details .details-body { padding:4px 20px 20px; }
     .case-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
@@ -320,7 +335,8 @@
     .responsibility-flow li { position:relative; display:grid; grid-template-columns:62px minmax(190px,.75fr) minmax(260px,1.25fr); align-items:stretch; background:#fff; border:2px solid #231f20; box-shadow:0 6px 14px rgba(0,0,0,.07); }
     .responsibility-flow li:not(:last-child)::after { content:"↓"; position:absolute; left:20px; bottom:-32px; color:#231f20; font-size:1.65rem; line-height:1; font-weight:900; }
     .flow-number { display:grid; place-items:center; background:#231f20; color:var(--yellow); font-size:1.55rem; font-weight:900; }
-    .flow-question { padding:15px 18px; background:var(--yellow); color:#231f20; font-weight:900; line-height:1.25; }
+    .flow-question { padding:15px 18px; background:var(--yellow); color:#231f20; font-size:1.05rem; font-weight:800; line-height:1.3; }
+    .flow-heading { display:block; margin-bottom:7px; font-size:1.24rem; line-height:1.05; font-weight:950; letter-spacing:.01em; }
     .flow-explanation { padding:14px 18px; color:var(--ink); }
     .flow-explanation strong { display:block; margin-bottom:.15rem; }
     .flow-output { display:block; margin-top:.4rem; color:#555; font-size:.9rem; }
@@ -395,12 +411,18 @@
     .control-band .control-icon { display:grid; place-items:center; width:38px; height:38px; margin-bottom:12px; background:var(--yellow); color:#231f20; font-size:1.1rem; font-weight:900; }
     .required-case-layout { display:grid; gap:20px; }
     .required-case-layout > .case .case-illustration { height:96px; }
-    .case-anchor-trace { background:#fff; border:2px solid #231f20; border-top:9px solid var(--yellow); padding:22px; box-shadow:0 8px 18px rgba(0,0,0,.09); }
+    .case-anchor-trace { display:flex; flex-direction:column; background:#fff; border:2px solid #231f20; border-top:9px solid var(--yellow); padding:22px; box-shadow:0 8px 18px rgba(0,0,0,.09); }
     .case-anchor-trace h3 { margin:0 0 16px; }
     .case-trace-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; overflow:visible; padding:4px 3px 14px; }
     .case-trace-step { position:relative; min-height:170px; padding:16px 14px; background:#f5f5f5; border:1px solid #bbb; }
     .case-trace-step:not(:last-child)::after { content:"→"; position:absolute; right:-17px; top:50%; transform:translateY(-50%); z-index:2; color:#806d00; font-size:1.35rem; font-weight:900; }
     .case-trace-step:nth-child(3)::after { content:"↓"; right:50%; top:auto; bottom:-22px; transform:translateX(50%); }
+    .case-trace-step:nth-child(4) { grid-column:3; grid-row:2; }
+    .case-trace-step:nth-child(5) { grid-column:2; grid-row:2; }
+    .case-trace-step:nth-child(6) { grid-column:1; grid-row:2; }
+    .case-trace-step:nth-child(4)::after,
+    .case-trace-step:nth-child(5)::after { content:"←"; left:-17px; right:auto; }
+    .case-trace-step:nth-child(6)::after { display:none; }
     .case-trace-step strong { display:block; margin-bottom:8px; color:#231f20; }
     .case-trace-step span { color:#555; font-size:.9rem; line-height:1.4; }
     .case-trace-step.prompt-step { background:var(--yellow-soft); border-color:#806d00; }
@@ -451,6 +473,7 @@
     .oversight-path strong { font-size:1.05rem; }
     .oversight-path small { display:block; margin-top:4px; color:#5f5100; font-weight:800; }
     .case-source { margin:16px 0 0; padding-top:14px; border-top:1px solid #ccc; }
+    .case-anchor-trace .case-source:has(a) { order:-1; margin:0 0 20px; padding:15px 17px; border:0; border-left:7px solid var(--yellow); background:var(--blue-pale); }
     .scope-strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:20px 0; }
     .scope-strip div { padding:16px; background:#231f20; color:#fff; border-bottom:7px solid var(--yellow); }
     .scope-strip strong { display:block; color:var(--yellow); margin-bottom:5px; }
@@ -515,6 +538,16 @@
     .week-recap h3 { margin:0 0 14px; }
     .week-recap ul { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:0; padding:0; list-style:none; }
     .week-recap li { padding:14px; background:#f1f1f1; border-left:4px solid #231f20; }
+    .seminar-celebration { margin:22px 0 0; padding:28px 30px; background:var(--yellow); color:#231f20; border-top:8px solid #231f20; text-align:center; }
+    .seminar-celebration strong { display:block; margin-bottom:5px; font-size:clamp(1.45rem,3vw,2.05rem); }
+    .seminar-celebration p { margin:0; font-size:1.02rem; }
+    .confetti-layer { position:fixed; inset:0; z-index:9999; overflow:hidden; pointer-events:none; }
+    .confetti-piece { position:absolute; top:-24px; width:10px; height:18px; background:var(--confetti-colour); opacity:0; animation:confetti-fall var(--confetti-duration) cubic-bezier(.12,.72,.26,1) var(--confetti-delay) forwards; }
+    @keyframes confetti-fall {
+      0% { opacity:0; transform:translate3d(0,-4vh,0) rotate(0deg); }
+      8% { opacity:1; }
+      100% { opacity:.95; transform:translate3d(var(--confetti-drift),108vh,0) rotate(var(--confetti-spin)); }
+    }
     .week-transition { min-height:190px; margin:54px 0 0; border-radius:0; background:#231f20; color:#fff; display:grid; place-items:center; text-align:center; padding:28px; position:relative; overflow:hidden; border-bottom:8px solid var(--yellow); }
     .week-transition::after { content:"↓"; position:absolute; right:28px; bottom:12px; color:var(--yellow); font-size:3.2rem; font-weight:900; animation:continue-pulse 1.5s ease-in-out infinite; }
     .week-transition strong { display:block; color:var(--yellow); font-size:1.35rem; margin-bottom:6px; }
@@ -627,9 +660,117 @@
     .preparation-requirement { box-shadow:none; }
     .stage-footer { background:var(--blue-pale); border-top:0; }
     footer { background:#191919; color:#fff; }
+
+    /* Guided-page rhythm and visual consistency */
+    body.guided-mode .content { padding-top:36px; }
+    body.guided-mode .module.stage-active { margin-top:22px; }
+    body.guided-mode .module.stage-active > .stage-guide { margin-bottom:20px; }
+    body.guided-mode .module.stage-active > section.active-stage {
+      padding:clamp(24px,3vw,34px);
+    }
+    body.guided-mode .module.stage-active > section.active-stage ~ section.active-stage {
+      margin-top:18px;
+    }
+    body.guided-mode .module.stage-active > section.active-stage > h2:first-of-type {
+      margin:0 0 18px;
+      font-size:clamp(1.55rem,2.5vw,2.15rem);
+      line-height:1.15;
+    }
+    body.guided-mode .module.stage-active > section.active-stage > h3 {
+      margin-top:28px;
+      margin-bottom:12px;
+    }
+    body.guided-mode .module.stage-active > section.active-stage > p,
+    body.guided-mode .module.stage-active > section.active-stage > ul,
+    body.guided-mode .module.stage-active > section.active-stage > ol {
+      margin-top:10px;
+      margin-bottom:16px;
+    }
+    body.guided-mode .grid { gap:14px; }
+    body.guided-mode .card { padding:18px; }
+    body.guided-mode .grid:not(.knowledge-checks) > .card {
+      border:0;
+      border-top:4px solid #231f20;
+      background:rgba(255,255,255,.82);
+    }
+    body.guided-mode .visual-options > .card {
+      border-top:0;
+      border-left:6px solid var(--yellow);
+      box-shadow:none;
+    }
+    body.guided-mode .callout,
+    body.guided-mode .scenario-thread,
+    body.guided-mode .diagram,
+    body.guided-mode .media-lesson,
+    body.guided-mode .reading-lesson,
+    body.guided-mode .quick-check,
+    body.guided-mode details {
+      margin-top:20px;
+      margin-bottom:20px;
+    }
+    body.guided-mode .section-check { margin-top:26px; margin-bottom:0; }
+    body.guided-mode .stage-footer { margin-top:26px; }
+    body.guided-mode .case,
+    body.guided-mode .diagram,
+    body.guided-mode details,
+    body.guided-mode .case-progression > div,
+    body.guided-mode .design-decision,
+    body.guided-mode .design-loop div,
+    body.guided-mode .diagram-node,
+    body.guided-mode .skill-file pre {
+      border-radius:0;
+    }
+    body.guided-mode .case-grid,
+    body.guided-mode .case-progression,
+    body.guided-mode .scenario-arc,
+    body.guided-mode .visual-options {
+      margin-top:18px;
+      margin-bottom:22px;
+    }
+    .optional-section.optional-prepared {
+      padding:0 !important;
+      border-top:0;
+      background:transparent !important;
+    }
+    .optional-section.optional-prepared::before { display:none; }
+    .optional-expander {
+      margin:0 !important;
+      border:2px solid #767676;
+      background:#fff;
+    }
+    .optional-expander > summary {
+      list-style:none;
+      cursor:pointer;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;
+      gap:8px 18px;
+      padding:18px 20px;
+      background:#f1f1f1;
+    }
+    .optional-expander > summary::-webkit-details-marker { display:none; }
+    .optional-expander > summary:focus-visible { outline:4px solid var(--focus); outline-offset:3px; }
+    .optional-expander > summary:hover,
+    .optional-expander[open] > summary { background:var(--yellow-soft); }
+    .optional-kicker {
+      grid-column:1 / -1;
+      color:#4a4a4a;
+      font-size:.7rem;
+      font-weight:900;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+    }
+    .optional-expander > summary strong { font-size:1.12rem; line-height:1.25; }
+    .optional-action { font-weight:900; white-space:nowrap; }
+    .optional-action::before { content:"Expand ↓"; }
+    .optional-expander[open] .optional-action::before { content:"Collapse ↑"; }
+    .optional-expander-body { padding:clamp(22px,3vw,34px); }
+    .small-scale-note { margin:20px 0 28px; padding:18px 20px; background:#fff; border-left:8px solid var(--yellow); }
+    .small-scale-note p { margin:.35rem 0 0; }
     @media (max-width:900px) {
       .app-shell { display:block; }
       .rail { position:relative; height:auto; padding:20px; }
+      .page-reading-progress { left:0; }
       .week-switcher { max-width:420px; }
       .rail nav { display:block; }
       .rail-note { display:none; }
@@ -664,9 +805,12 @@
       .state-layer, .oversight-path li { grid-template-columns:46px 1fr; }
       .state-layer { margin-inline:0 !important; }
       .oversight-path li > div { grid-column:2; }
-      .case-trace-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-      .case-trace-step:nth-child(3)::after { content:"→"; right:-17px; top:50%; bottom:auto; transform:translateY(-50%); }
-      .case-trace-step:nth-child(even):not(:last-child)::after { content:"↓"; right:50%; top:auto; bottom:-22px; transform:translateX(50%); }
+      .case-trace-grid { grid-template-columns:1fr; }
+      .case-trace-step:nth-child(4), .case-trace-step:nth-child(5), .case-trace-step:nth-child(6) { grid-column:auto; grid-row:auto; }
+      .case-trace-step:not(:last-child)::after,
+      .case-trace-step:nth-child(3)::after,
+      .case-trace-step:nth-child(4)::after,
+      .case-trace-step:nth-child(5)::after { content:"↓"; left:auto; right:50%; top:auto; bottom:-22px; transform:translateX(50%); display:block; }
     }
     @media (max-width:650px) {
       .module > section + section { margin-top:56px; }
@@ -721,7 +865,7 @@
     }
     @media print {
       .module > section + section { margin-top:28px; }
-      .rail, .top-button, .quick-check { display:none !important; }
+      .rail, .top-button, .quick-check, .page-reading-progress { display:none !important; }
       .app-shell { display:block; }
       .hero { background:#fff; color:#000; padding:20px 0; }
       .hero p { color:#333; }
@@ -730,33 +874,31 @@
       .card, .orientation, .glossary { box-shadow:none; break-inside:avoid; }
       a { color:#000; }
       .page-view { display:block !important; }
-      .reveal-section { opacity:1 !important; transform:none !important; }
+      .scroll-reveal { opacity:1 !important; transform:none !important; }
     }
     @media (prefers-reduced-motion:reduce) {
       html { scroll-behavior:auto; }
       .page-view.active-view { animation:none; }
-      .reveal-section { opacity:1; transform:none; transition:none; }
+      .scroll-reveal { opacity:1; transform:none; transition:none; }
       .week-transition::after { animation:none; }
+      .confetti-layer { display:none !important; }
     }
   </style>
 </head>
 <body class="guided-mode">
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div class="page-reading-progress" id="page-reading-progress" role="progressbar" aria-label="Progress through the current page" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="page-reading-progress-fill"></span></div>
   <div class="app-shell">
     <aside class="rail" aria-label="Study companion navigation">
       <div class="brand-lockup"><img src="https://www.unsw.edu.au/content/dam/images/unsw-wide/general/branding/2022-12-brand/sydney-landscape.cropimg.width=1920.png" alt="UNSW Sydney"></div>
       <div class="eyebrow">INFS5706 · AI IN ACTION</div>
       <h1>Weeks 7–9</h1>
-      <div class="sub">Agentic AI and Responsible AI</div>
+      <div class="sub">Agentic AI and Responsible AI in Action</div>
       <div class="week-switcher" aria-label="Choose a module">
         <a href="#overview" data-nav-group="start" aria-label="Open the overview">Start</a>
         <a href="#week7" data-nav-group="week7" aria-label="Open Week 7">W7</a>
         <a href="#week8" data-nav-group="week8" aria-label="Open Week 8">W8</a>
         <a href="#week9" data-nav-group="week9" aria-label="Open Week 9">W9</a>
-      </div>
-      <div class="view-mode" aria-label="Choose how to read the companion">
-        <button type="button" id="guided-mode-button" class="active" aria-pressed="true">Guided journey</button>
-        <button type="button" id="reference-mode-button" aria-pressed="false">Reference view</button>
       </div>
       <div class="week-completion" id="week-completion" aria-live="polite">
         <strong>Your weekly progress</strong>
@@ -797,7 +939,7 @@
           </div>
         </div>
         <div class="nav-group" data-group="week9">
-          <a class="nav-group-link" href="#week9">Week 9 · Responsible AI</a>
+          <a class="nav-group-link" href="#week9">Week 9 · Responsible AI in Action</a>
           <div class="nav-section-links">
             <a href="#w9-overview">What will you learn this week?</a>
             <a href="#w9-principles" data-stage-link="1">1 · Define responsible outcomes</a>
@@ -857,7 +999,7 @@
               <div class="week-card-visual" aria-hidden="true">
                 <svg viewBox="0 0 220 120"><path d="M110 12 L162 31 V61 C162 88 142 106 110 114 C78 106 58 88 58 61 V31 Z" fill="#ffe600" stroke="#fff" stroke-width="5"/><path d="M84 60 L102 78 L138 42" fill="none" stroke="#231f20" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
-              <div class="week-card-body"><span class="pill">WEEK 9 · RESPONSIBLE AI</span><h3>Govern the whole system</h3><p>Connect principles to stakeholders, risks, controls, accountable owners, monitoring and redress.</p><div class="enter-week"><span>Explore Week 9</span><span aria-hidden="true">→</span></div></div>
+              <div class="week-card-body"><span class="pill">WEEK 9 · RESPONSIBLE AI IN ACTION</span><h3>Govern the whole system</h3><p>Connect principles to stakeholders, risks, controls, accountable owners, monitoring and redress.</p><div class="enter-week"><span>Explore Week 9</span><span aria-hidden="true">→</span></div></div>
             </a>
           </div>
           <div class="callout"><strong>Core idea:</strong> capability, complexity and responsibility increase together. Greater autonomy or organisational consequence requires clearer limits, stronger oversight and more evidence that the system remains fit for purpose.</div>
@@ -885,7 +1027,7 @@
             <p><strong>Core concepts:</strong> Outcomes or goals, models, tools, instructions, knowledge, context, state, memory, actions, guardrails and human oversight, with a brief introduction to reusable skills.</p>
             <p><strong>By the end:</strong> You should be able to recognise a simple-agent use case and explain the capabilities, boundaries and human responsibilities it requires.</p>
           </div>
-          <p class="time-note"><strong>Required pathway:</strong> about 60 minutes, including required excerpts, focused reading and knowledge checks. Sections labelled optional depth and expandable “Explore further” material are excluded from this total.</p>
+          <p class="time-note"><strong>Required pathway:</strong> about 60 minutes, including required excerpts, focused reading and knowledge checks. Expandable “More detail” panels provide supporting explanation when needed. Sections labelled “Optional extension” are excluded from this total.</p>
           <div class="scenario-thread">
             <div class="scenario-label">Running scenario</div>
             <p><strong>A recurring internet-service enquiry:</strong> a customer reports that their home internet has disconnected repeatedly for three days. Restarting the router did not resolve the problem, and the disruption is affecting their work. A frontline employee needs to gather the relevant details, consult approved troubleshooting and escalation guidance, and prepare an appropriate next step. We will follow this same enquiry throughout Week 7.</p>
@@ -1231,10 +1373,11 @@
               <a id="w7-preparation-download-link" download>Download the Word template ↓</a>
             </div>
           </section>
-          <div class="week-recap">
+          <div class="week-recap" data-week-closure="week7" hidden>
             <h3>What should you take from Week 7?</h3>
             <ul><li>A simple agent pursues one bounded outcome through permitted steps.</li><li>Good instructions translate decisions about the user, outcome, inputs, process, output and authority.</li><li>Triggers determine when a run begins; stopping conditions determine when it completes, reaches a limit or requires intervention.</li><li>An inspectable run should make the agent’s sources, tools, actions, uncertainty and human involvement visible.</li><li>People retain responsibility for consequential decisions and actions.</li></ul>
           </div>
+          <div class="seminar-celebration" data-week-closure="week7" role="note" hidden><strong>Congratulations, you have completed Week 7.</strong><p>Bring your completed preparation activity. See you in the seminar.</p></div>
           <div class="week-transition" data-next="week8">
             <div><strong>Continue to Week 8</strong><p>Keep scrolling to move from simple agents to complex agents and architectures.</p><a href="#week8">Go to Week 8 now</a></div>
           </div>
@@ -1262,7 +1405,7 @@
             <p><strong>Core concepts:</strong> Task decomposition, reusable skills, context and state ownership, specialisation, orchestration, manager patterns, handovers, recovery, observability and coordination costs.</p>
             <p><strong>By the end:</strong> You should be able to diagnose complexity, choose among a fixed workflow, one agent with skills and coordinated specialist agents, and explain how the complete system will remain coherent and controllable.</p>
           </div>
-          <p class="time-note"><strong>Required pathway:</strong> about 52 minutes, including required media, focused reading and knowledge checks. Optional cases, expandable detail and the platform extension are excluded from this total.</p>
+          <p class="time-note"><strong>Required pathway:</strong> about 58 minutes, including required media, focused reading and knowledge checks. Expandable detail and the platform extension are excluded from this total.</p>
           <div class="scenario-thread">
             <div class="scenario-label">Running scenario</div>
             <p><strong>The Week 7 enquiry has become harder to resolve.</strong> The customer’s internet disruptions have continued despite several support contacts. The customer also questions charges covering the affected period and explains that the disruption is preventing them from working. The service must now connect technical history, billing information, customer impact, approved remediation guidance and possible escalation. The employee still reviews the recommendation and remains responsible for any action.</p>
@@ -1279,7 +1422,7 @@
           <div class="week-journey" aria-label="Week 8 architecture decision journey: extend the problem, package capabilities, compare architectures, and design coordination.">
             <a href="#w8-complexity"><strong>Extend the problem</strong><span>Identify what has changed since Week 7 and diagnose the tasks, information, pathways, memory, tools and consequences creating complexity.</span><small>Produces: a complexity diagnosis</small></a>
             <a href="#w8-skills"><strong>Package capabilities</strong><span>Decide whether repeatable specialist work can become a reusable skill within the existing agent.</span><small>Produces: a capability design</small></a>
-            <a href="#w8-multi"><strong>Compare architectures</strong><span>Compare a fixed workflow, one capable agent with skills and specialist agents, then choose the simplest defensible option.</span><small>Produces: an architecture decision</small></a>
+            <a href="#w8-cases"><strong>Compare architectures</strong><span>Compare a fixed workflow, one capable agent with skills and specialist agents, then choose the simplest defensible option.</span><small>Produces: an architecture decision</small></a>
             <a href="#w8-patterns"><strong>Design coordination</strong><span>Define routing, shared context, handovers, recovery, stopping conditions, observability and human intervention.</span><small>Produces: a coordinated system design</small></a>
           </div>
 
@@ -1376,7 +1519,7 @@ description: Use when a frontline employee receives a report of repeated interne
           </section>
 
           <section id="w8-cases" class="required-section" data-stage="3">
-            <h2>How does the case evidence change the architecture decision? <span class="section-time">About 11 min · includes 7 min reading</span></h2>
+            <h2>How does the case evidence change the architecture decision? <span class="section-time">About 22 min · includes 10 min reading and 5 min video</span></h2>
             <div class="case-sequence"><strong>Read these cases as a progression.</strong> First test whether one agent can retain the complete context. Then examine what changes as task diversity, separable responsibilities and coordination pressure increase. The cases support a conditional architecture decision rather than a universal preference for one or many agents.</div>
             <div class="case-progression" role="img" aria-label="Four-stage case progression from a coherent task suited to one agent through mixed workloads and separable workflows to a coordination-intensive system where multiple agents may be justified.">
               <div><span class="step">1</span><strong>Coherent task</strong><p>One goal, complete shared context and no required handovers.</p><small>One agent may be sufficient</small></div>
@@ -1385,17 +1528,24 @@ description: Use when a frontline employee receives a report of repeated interne
               <div><span class="step">4</span><strong>Coordination-intensive system</strong><p>Distributed inputs, roles and consequences require routing, shared state and recovery.</p><small>Multiple agents may be justified</small></div>
             </div>
             <div class="case-grid">
-              <article class="case"><div class="case-illustration mars" aria-hidden="true">☄</div><div class="case-stage">1 · Test the single-agent baseline</div><h3>Mars-rover decision support</h3><p>One agent received each complete synthetic scenario and produced a recommended action, risk level, hazards, reasoning and confidence rating. It did not need external tools or handovers between specialists.</p><p class="lesson">Architecture implication: complex reasoning can remain with one agent when the task is coherent, the full context fits together and separate responsibilities add little value.</p><p><strong>Read, about 3 min:</strong> Abstract, “Experimental setup” and the first two paragraphs of “Discussion”.</p><a href="https://www.frontiersin.org/journals/robotics-and-ai/articles/10.3389/frobt.2026.1877762/full" target="_blank" rel="noopener">Open the focused research reading ↗</a></article>
-              <article class="case optional-depth"><div class="case-illustration safety" aria-hidden="true">✚</div><div class="case-stage">2 · Increase workload diversity and scale</div><h3>Scaling mixed clinical task batches</h3><p>A controlled study compared one agent handling mixed batches of retrieval, clinical-note extraction and medication-dosing tasks with an orchestrator assigning tasks to specialist workers. As batch size increased from 5 to 80 tasks, reported single-agent accuracy fell from 73.1% to 16.6%, while multi-agent accuracy fell from 90.6% to 65.3%.</p><p class="lesson">Architecture implication: orchestration becomes more plausible when mixed tasks compete for context and attention. These curated tasks had deterministic answers and were not a deployed clinical service.</p><p><strong>Optional reading, about 3 min:</strong> Abstract, the architecture figure and the opening of “Discussion”.</p><a href="https://doi.org/10.1038/s44401-026-00077-0" target="_blank" rel="noopener">Open the focused research reading ↗</a></article>
-              <article class="case"><div class="case-illustration" aria-hidden="true">✉</div><div class="case-stage">3 · Separate a repeatable workflow</div><h3>UK utilities email response</h3><p>A small pilot separated email categorisation, summary, template selection, knowledge retrieval and response generation into specialist components before employee refinement. The workflow contained recurring stages with different instructions and information needs.</p><p class="lesson">Architecture implication: multiple specialists may be justified when responsibilities can be bounded and coordinated. The pilot involved only three employees and 24 emails, so its reported results do not establish performance at organisational scale.</p><a href="#w8-utilities-reading">Continue to the focused case reading ↓</a></article>
-              <article class="case"><div class="case-illustration public" aria-hidden="true">⌁</div><div class="case-stage">4 · Examine an architecture demonstration</div><h3>High-pressure coordination</h3><p>A vendor-hosted conference session illustrates how distributed inputs, specialist contributions and human monitoring could be coordinated while preserving a shared view of a high-pressure situation.</p><p class="lesson">Architecture implication: the demonstration helps reveal routing, shared-context, oversight and recovery requirements. It is an illustration of a proposed architecture rather than independent evidence of operational effectiveness.</p><a href="#w8-operate">Continue to the focused architecture viewing ↓</a></article>
-            </div>
-            <div class="callout"><strong>The progressive lesson:</strong> begin with one capable agent. Consider decomposition when evidence shows that task diversity, distinct responsibilities, permissions, parallel work or coordination requirements exceed what one agent can handle reliably. Every added agent creates new handovers, state-management demands and failure points.</div>
-            <div class="media-lesson" id="w8-utilities-reading">
+              <article class="case"><figure class="case-photo"><img src="assets/week-8-mars-rover.jpg" alt="Illustrative Mars rover examining a rocky landscape." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><div class="case-stage">1 · Test the single-agent baseline</div><h3>Mars-rover decision support</h3><p>One agent received each complete synthetic scenario and produced a recommended action, risk level, hazards, reasoning and confidence rating. It did not need external tools or handovers between specialists.</p><p class="lesson">Architecture implication: complex reasoning can remain with one agent when the task is coherent, the full context fits together and separate responsibilities add little value.</p><p><strong>Required reading, about 3 min:</strong> Abstract, “Experimental setup” and the first two paragraphs of “Discussion”.</p><a href="https://www.frontiersin.org/journals/robotics-and-ai/articles/10.3389/frobt.2026.1877762/full" target="_blank" rel="noopener">Open the focused research reading ↗</a></article>
+              <div class="quick-check section-check" data-answer="1" data-explanation="The Mars-rover case provides a single-agent baseline: complex reasoning can remain coherent when one agent receives the complete scenario and specialist handovers add little value."><div class="question-number">Case check 1 of 4</div><h3>What is the strongest architectural lesson from the Mars-rover case?</h3><div class="choices"><button class="choice">A complex task always performs best with one agent.</button><button class="choice">Complex reasoning alone does not establish a need for multiple agents.</button><button class="choice">A single agent is appropriate only when no judgement is required.</button></div><div class="feedback" aria-live="polite"></div></div>
+              <article class="case"><figure class="case-photo"><img src="assets/week-8-clinical-workloads.jpg" alt="Illustrative clinical team reviewing several specialised information streams through one coordinated workspace." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><div class="case-stage">2 · Increase workload diversity and scale</div><h3>Scaling mixed clinical task batches</h3><p>A controlled study compared one agent handling mixed batches of retrieval, clinical-note extraction and medication-dosing tasks with an orchestrator assigning tasks to specialist workers. As batch size increased from 5 to 80 tasks, reported single-agent accuracy fell from 73.1% to 16.6%, while multi-agent accuracy fell from 90.6% to 65.3%.</p><p class="lesson">Architecture implication: orchestration becomes more plausible when mixed tasks compete for context and attention. These curated tasks had deterministic answers and were not a deployed clinical service.</p><p><strong>Required reading, about 3 min:</strong> Abstract, the architecture figure and the opening of “Discussion”.</p><a href="https://doi.org/10.1038/s44401-026-00077-0" target="_blank" rel="noopener">Open the focused research reading ↗</a></article>
+              <div class="quick-check section-check" data-answer="2" data-explanation="The controlled comparison supports a conditional claim about mixed task batches. Its curated tasks and deterministic answers do not establish safety or effectiveness in deployed clinical work."><div class="question-number">Case check 2 of 4</div><h3>What can the clinical-workloads study reasonably support?</h3><div class="choices"><button class="choice">Multi-agent systems are ready to make consequential clinical decisions.</button><button class="choice">Every sufficiently large task batch should be divided among specialist agents.</button><button class="choice">Specialist orchestration may help with larger mixed-task batches in this controlled setting.</button></div><div class="feedback" aria-live="polite"></div></div>
+              <article class="case"><figure class="case-photo"><img src="assets/week-8-utilities-email.jpg" alt="Illustrative utility customer-service team coordinating email triage and approved response guidance." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><div class="case-stage">3 · Separate a repeatable workflow</div><h3>UK utilities email response</h3><p>A small pilot separated email categorisation, summary, template selection, knowledge retrieval and response generation into specialist components before employee refinement. The workflow contained recurring stages with different instructions and information needs.</p><p class="lesson">Architecture implication: multiple specialists may be justified when responsibilities can be bounded and coordinated. The pilot involved only three employees and 24 emails, so its reported results do not establish performance at organisational scale.</p><a href="#w8-utilities-reading">Continue to the focused case reading ↓</a></article>
+              <div class="media-lesson" id="w8-utilities-reading">
               <div class="media-card"><div><div class="type">FOCUSED CASE READING · APPROX. 4 MIN</div><h3>UK utilities customer-service automation</h3><p>Read Section 5.4 for the workflow, pilot and results, then Section 5.5 for why the authors associate the hierarchical pattern with a stable, policy-constrained pipeline.</p></div><a href="https://www.techscience.com/jai/v8n1/67006/html" target="_blank" rel="noopener">Open the targeted sections ↗</a></div>
               <div class="media-guidance"><div class="type">READ WITH CAUTION</div><h3>What should you extract?</h3><ul><li>Which responsibilities were separated?</li><li>What information moved between components?</li><li>Where did employee refinement remain?</li><li>How small was the reported pilot, and what does that limit?</li></ul><p class="source-note">Harri Renney, Maxim Nethercott, Nathan Renney and Peter Hayes, <em>Journal on Artificial Intelligence</em>, 8, 231–257. <a href="https://doi.org/10.32604/jai.2026.078487" target="_blank" rel="noopener">DOI ↗</a></p></div>
+              </div>
+              <div class="quick-check section-check" data-answer="0" data-explanation="The small pilot can illustrate a decomposed workflow and generate preliminary evidence. Its three employees and 24 emails are insufficient to establish performance at organisational scale."><div class="question-number">Case check 3 of 4</div><h3>How should the UK utilities pilot influence an architecture decision?</h3><div class="choices"><button class="choice">Use it as limited evidence that bounded specialist components can support a repeatable workflow.</button><button class="choice">Treat its reported accuracy as proof that the architecture will perform reliably at organisational scale.</button><button class="choice">Reject specialist architectures because employee refinement remained in the workflow.</button></div><div class="feedback" aria-live="polite"></div></div>
+              <article class="case"><figure class="case-photo"><img src="assets/week-8-high-pressure-coordination.jpg" alt="Illustrative emergency coordination team reviewing shared maps, weather information and resource status." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><div class="case-stage">4 · Examine an architecture demonstration</div><h3>High-pressure coordination</h3><p>A vendor-hosted conference session illustrates how distributed inputs, specialist contributions and human monitoring could be coordinated while preserving a shared view of a high-pressure situation.</p><p class="lesson">Architecture implication: the demonstration helps reveal routing, shared-context, oversight and recovery requirements. It is an illustration of a proposed architecture rather than independent evidence of operational effectiveness.</p></article>
+              <div class="media-lesson" id="w8-video-coordination">
+                <div class="media-card"><div><div class="type">REQUIRED FOCUSED VIEWING · APPROX. 5 MINUTES</div><h3>Enhanced decision-making in disaster response with multi-agent AI</h3><p>Watch <strong>22:02–23:21</strong> for the concurrent inputs, multi-agent integration and simulation layer. Then watch <strong>27:41–31:35</strong> for orchestration, specialist agents, shared outputs, human monitoring and transparency.</p></div><a href="https://www.nvidia.com/en-us/on-demand/session/gtc25-s72880/" target="_blank" rel="noopener">Watch on NVIDIA On-Demand ↗</a></div>
+                <div class="media-guidance"><div class="type">VIEW WITH CAUTION</div><h3>What should you extract?</h3><ul><li>What does the orchestrator coordinate?</li><li>What do the specialist agents contribute?</li><li>What information moves between them?</li><li>Where does a person remain responsible?</li></ul><p class="source-note">This is a vendor-hosted conference case, and the published transcript is AI-generated. Use it to examine the presented architecture and acknowledged limitations, rather than as independent evidence of effectiveness.</p></div>
+              </div>
+              <div class="quick-check section-check" data-answer="1" data-explanation="The demonstration is useful for examining coordination requirements. Its vendor-hosted and demonstrative nature does not independently establish operational effectiveness."><div class="question-number">Case check 4 of 4</div><h3>What is the most defensible use of the high-pressure coordination case?</h3><div class="choices"><button class="choice">Use it as independent proof that the demonstrated system improves disaster-response outcomes.</button><button class="choice">Use it to identify coordination requirements that would need operational validation.</button><button class="choice">Use it to conclude that every high-pressure decision should be distributed across several agents.</button></div><div class="feedback" aria-live="polite"></div></div>
             </div>
-            <div class="quick-check section-check" data-answer="1" data-explanation="The Mars Rover case establishes the single-agent baseline: complex trade-offs can remain with one agent when the complete scenario can be considered coherently without specialist handovers."><div class="question-number">Pause and check</div><h3>Why does the Mars Rover case begin the progression?</h3><div class="choices"><button class="choice">It proves that single-agent systems always outperform multiple agents.</button><button class="choice">It shows that task complexity alone does not justify multiple agents.</button><button class="choice">It shows that rover decisions can be made without reasoning or trade-offs.</button></div><div class="feedback" aria-live="polite"></div></div>
+            <div class="callout"><strong>The progressive lesson:</strong> begin with one capable agent. Consider decomposition when evidence shows that task diversity, distinct responsibilities, permissions, parallel work or coordination requirements exceed what one agent can handle reliably. Every added agent creates new handovers, state-management demands and failure points.</div>
           </section>
 
           <section id="w8-multi" class="required-section" data-stage="3">
@@ -1460,14 +1610,9 @@ description: Use when a frontline employee receives a report of repeated interne
           </section>
 
           <section id="w8-operate" class="required-section" data-stage="5">
-            <h2>How does a coordinated system remain coherent? <span class="section-time">About 7 min · includes 5 min video</span></h2>
+            <h2>How does a coordinated system remain coherent? <span class="section-time">About 2 min</span></h2>
             <p>Each component may complete its own task while the overall system still fails. The architecture therefore needs a shared view of progress, bounded recovery behaviour and an inspectable record of the complete workflow.</p>
             <div class="scenario-thread"><div class="scenario-label">Scenario decision 5</div><p><strong>What must survive the transfer?</strong> If technical-support work is transferred to a billing-remediation specialist, that specialist needs the confirmed disruption period, previous troubleshooting, customer impact, relevant account-period information, remaining uncertainty and the reason for the transfer. The organisation also needs one authoritative case state showing who currently owns the work.</p></div>
-            <div class="media-lesson">
-              <div class="media-card"><div><div class="type">FOCUSED VIEWING · APPROX. 5 MINUTES</div><h3>Enhanced decision-making in disaster response with multi-agent AI</h3><p>Watch <strong>22:02–23:21</strong> for the concurrent inputs, multi-agent integration and simulation layer. Then watch <strong>27:41–31:35</strong> for orchestration, specialist agents, shared outputs, human monitoring and transparency.</p></div><a href="https://www.nvidia.com/en-us/on-demand/session/gtc25-s72880/" target="_blank" rel="noopener">Watch on NVIDIA On-Demand ↗</a></div>
-              <div class="media-guidance"><div class="type">OPTIONAL EXTENSIONS</div><h3>What else is worth watching?</h3><ul><li><strong>09:34–10:58:</strong> a short 911-call demonstration showing information capture, dispatch support and human interaction.</li><li><strong>32:34–36:24:</strong> discussion of human oversight and the gap between a working research prototype and a validated operational system.</li><li><strong>41:27–43:37:</strong> discussion of uncertainty, confidence and how the system responds as information quality deteriorates.</li></ul><p><strong>While viewing:</strong> identify what the orchestrator coordinates, what the specialist agents contribute, what information moves between them and where a person remains responsible.</p><p class="source-note">This is a vendor-hosted conference case, and the published transcript is AI-generated. Use the session to examine the presented architecture and its acknowledged limitations, rather than treating it as independent evidence of effectiveness.</p></div>
-            </div>
-
             <h3>Where should context and state live?</h3>
             <div class="state-layers" role="img" aria-label="Three layers of system information: shared case state for the complete workflow, local context for a specialist, and justified long-term memory across runs.">
               <div class="state-layer"><strong>Shared case state</strong><span>The authoritative record of the goal, current stage, completed work, important facts and next responsibility.</span></div>
@@ -1571,10 +1716,11 @@ description: Use when a frontline employee receives a report of repeated interne
               <a id="w8-preparation-download-link" download>Download the Word template ↓</a>
             </div>
           </section>
-          <div class="week-recap">
+          <div class="week-recap" data-week-closure="week8" hidden>
             <h3>What should you take from Week 8?</h3>
             <ul><li>Complexity comes from the work, information, pathways, authority and coordination required.</li><li>A fixed workflow is suitable when routing and decision rules are stable and predictable.</li><li>A reusable skill can add specialist capability within one agent.</li><li>Additional agents need a demonstrable benefit that outweighs coordination and handover costs.</li><li>Coordinated systems require explicit state ownership, handover contracts, failure recovery, completion conditions and system-level observability.</li></ul>
           </div>
+          <div class="seminar-celebration" data-week-closure="week8" role="note" hidden><strong>Congratulations, you have completed Week 8.</strong><p>Bring your completed preparation activity. See you in the seminar.</p></div>
           <div class="week-transition" data-next="week9">
             <div><strong>Continue to Week 9</strong><p>Keep scrolling to move from agent architecture to responsible AI in action.</p><a href="#week9">Go to Week 9 now</a></div>
           </div>
@@ -1582,7 +1728,7 @@ description: Use when a frontline employee receives a report of repeated interne
 
         <section class="module page-view" id="week9" data-view="week9">
           <div class="module-head">
-            <span class="week">WEEK 9</span>
+            <span class="week">WEEK 9 · RESPONSIBLE AI IN ACTION</span>
             <h2 class="section-title">How can organisations put Responsible AI into action?</h2>
             <p>Responsible AI requires organisations to govern the complete system: technology, people, processes, controls and consequences.</p>
           </div>
@@ -1602,7 +1748,11 @@ description: Use when a frontline employee receives a report of repeated interne
             <p><strong>Core concepts:</strong> Societal and organisational values, principles, intended benefits, stakeholders, risks, harms, controls, ownership, monitoring, redress and meaningful human oversight.</p>
             <p><strong>By the end:</strong> You should be able to identify an intended benefit and material AI risk, then explain the controls, owners, evidence and redress required for a responsible implementation decision.</p>
           </div>
-          <p class="time-note"><strong>Required pathway:</strong> about 60 minutes, including focused source reading and knowledge checks. Optional cases and media are excluded.</p>
+          <div class="small-scale-note">
+            <strong>Responsible AI also scales down.</strong>
+            <p>The same questions apply when you use AI personally, professionally or in a small business. The level of documentation and control should reflect the consequences: clarify the purpose, consider who may be affected, protect information, verify important outputs and decide when human judgement must take over.</p>
+          </div>
+          <p class="time-note"><strong>Required pathway:</strong> about 70 minutes, including all six cases, their embedded videos, focused source reading and knowledge checks. Readings explicitly labelled optional are excluded.</p>
 
           <section id="w9-principles" class="required-section" data-stage="1">
             <h2><span class="w9-section-icon" aria-hidden="true">⚖</span>What do Australia’s AI Ethics Principles require? <span class="section-time">About 11 min · includes 4 min reading</span></h2>
@@ -1623,20 +1773,25 @@ description: Use when a frontline employee receives a report of repeated interne
           </section>
 
           <section id="w9-controls" class="required-section" data-stage="2">
-            <h2><span class="w9-section-icon" aria-hidden="true">→</span>How do principles become responsible action? <span class="section-time">About 8 min</span></h2>
+            <h2><span class="w9-section-icon" aria-hidden="true">→</span>How do principles become responsible requirements? <span class="section-time">About 4 min</span></h2>
             <p>Principles become actionable only when an organisation turns them into a sequence of decisions. Use the six questions below as the anchor for every case in this week. Each answer should produce something concrete that can be examined, assigned and improved.</p>
             <ol class="responsibility-flow" aria-label="Six-step responsible AI action flowchart">
-              <li><span class="flow-number">1</span><div class="flow-question">Which principle defines the intended outcome?</div><div class="flow-explanation"><strong>Start with the standard the system should meet.</strong> Select the principles that are materially relevant and state what they require in this context.<span class="flow-output"><strong>Output:</strong> a clear responsible-AI objective.</span></div></li>
-              <li><span class="flow-number">2</span><div class="flow-question">Who experiences the system and its consequences?</div><div class="flow-explanation"><strong>Identify stakeholders before defining the risk.</strong> Include direct users, people affected by decisions, groups exposed indirectly and perspectives missing from the design process.<span class="flow-output"><strong>Output:</strong> an affected-stakeholder map.</span></div></li>
-              <li><span class="flow-number">3</span><div class="flow-question">What unacceptable outcome could occur?</div><div class="flow-explanation"><strong>Describe a specific risk and the harm it could create.</strong> Consider who is harmed, how serious the consequence could be, whether it is reversible and where uncertainty or bias enters.<span class="flow-output"><strong>Output:</strong> a concrete harm scenario.</span></div></li>
-              <li><span class="flow-number">4</span><div class="flow-question">What will prevent, detect and respond to it?</div><div class="flow-explanation"><strong>Choose controls that interrupt the pathway to harm.</strong> A control should have a clear mechanism. Training or a policy statement alone may be insufficient.<span class="flow-output"><strong>Output:</strong> preventive, detective, responsive and corrective controls.</span></div></li>
-              <li><span class="flow-number">5</span><div class="flow-question">Who has authority and accountability?</div><div class="flow-explanation"><strong>Assign ownership to identifiable roles.</strong> Specify who approves the use, operates each control, reviews exceptions, can stop the system and remains answerable for outcomes.<span class="flow-output"><strong>Output:</strong> named decision and control owners.</span></div></li>
-              <li><span class="flow-number">6</span><div class="flow-question">How will the organisation know and respond?</div><div class="flow-explanation"><strong>Define evidence, thresholds and remedies.</strong> Monitor performance and harms, enable complaints and contestability, investigate failures, remedy harm and revise the system.<span class="flow-output"><strong>Output:</strong> measures, review triggers and a redress pathway.</span></div></li>
+              <li><span class="flow-number">1</span><div class="flow-question"><span class="flow-heading">Principle</span>Which principle defines the intended outcome?</div><div class="flow-explanation"><strong>Start with the standard the system should meet.</strong> Select the principles that are materially relevant and state what they require in this context.<span class="flow-output"><strong>Output:</strong> a clear responsible-AI objective.</span></div></li>
+              <li><span class="flow-number">2</span><div class="flow-question"><span class="flow-heading">Stakeholders</span>Who experiences the system and its consequences?</div><div class="flow-explanation"><strong>Identify stakeholders before defining the risk.</strong> Include direct users, people affected by decisions, groups exposed indirectly and perspectives missing from the design process.<span class="flow-output"><strong>Output:</strong> an affected-stakeholder map.</span></div></li>
+              <li><span class="flow-number">3</span><div class="flow-question"><span class="flow-heading">Risk or harm</span>What unacceptable outcome could occur?</div><div class="flow-explanation"><strong>Describe a specific risk and the harm it could create.</strong> Consider who is harmed, how serious the consequence could be, whether it is reversible and where uncertainty or bias enters.<span class="flow-output"><strong>Output:</strong> a concrete harm scenario.</span></div></li>
+              <li><span class="flow-number">4</span><div class="flow-question"><span class="flow-heading">Controls</span>What will prevent, detect and respond to it?</div><div class="flow-explanation"><strong>Choose controls that interrupt the pathway to harm.</strong> A control should have a clear mechanism. Training or a policy statement alone may be insufficient.<span class="flow-output"><strong>Output:</strong> preventive, detective, responsive and corrective controls.</span></div></li>
+              <li><span class="flow-number">5</span><div class="flow-question"><span class="flow-heading">Owner</span>Who has authority and accountability?</div><div class="flow-explanation"><strong>Assign ownership to identifiable roles.</strong> Specify who approves the use, operates each control, reviews exceptions, can stop the system and remains answerable for outcomes.<span class="flow-output"><strong>Output:</strong> named decision and control owners.</span></div></li>
+              <li><span class="flow-number">6</span><div class="flow-question"><span class="flow-heading">Monitoring and redress</span>How will the organisation know and respond?</div><div class="flow-explanation"><strong>Define evidence, thresholds and remedies.</strong> Monitor performance and harms, enable complaints and contestability, investigate failures, remedy harm and revise the system.<span class="flow-output"><strong>Output:</strong> measures, review triggers and a redress pathway.</span></div></li>
             </ol>
-            <div class="feedback-loop"><strong>This is a cycle.</strong> Monitoring, incidents and stakeholder feedback may reveal a new harm, a failed control or a missing perspective. That evidence sends the organisation back through the earlier questions.</div>
             <div class="callout"><strong>Use this anchor for the cases that follow:</strong> Principle → stakeholder → risk or harm → control → owner → monitoring and redress. In each case, ask where this chain was strong, weak or absent.</div>
             <h3>How does an abstract principle become something operational?</h3>
             <div class="translation-example" aria-label="Example translating transparency into an operational facial-recognition control"><div><strong>Principle</strong>Transparency and explainability.</div><div><strong>Requirement</strong>People should know when facial recognition may affect them.</div><div><strong>Control</strong>Provide clear notice before collection and a route to further information.</div><div><strong>Evidence</strong>Audit whether notice remains visible and review complaints.</div><div><strong>Owner</strong>A named privacy role maintains and reviews the control.</div></div>
+            <div class="quick-check section-check" data-answer="2" data-explanation="A principle defines the responsible outcome. Operational responsibility requires the organisation to identify stakeholders and harms, then specify controls, owners, evidence and redress."><div class="question-number">Pause and check</div><h3>Why is naming a relevant AI Ethics Principle insufficient by itself?</h3><div class="choices"><button class="choice">A principle applies only after an AI system has caused harm.</button><button class="choice">A principle automatically determines the appropriate technology and organisational workflow.</button><button class="choice">The organisation must still translate the principle into concrete requirements and responsibilities.</button></div><div class="feedback" aria-live="polite"></div></div>
+          </section>
+
+          <section id="w9-safeguards" class="required-section" data-stage="2">
+            <h2><span class="w9-section-icon" aria-hidden="true">⊘</span>How do controls interrupt the pathway to harm? <span class="section-time">About 3 min</span></h2>
+            <p>A control is a specific mechanism that changes what the system, its users or the organisation can do. Controls should be proportionate to the harm and assigned to people with the authority and resources to operate them.</p>
             <h3>How do controls operate before, during and after harm?</h3>
             <div class="control-band" role="img" aria-label="Four control types: preventive, detective, responsive, and corrective and redress.">
               <div><span class="control-icon" aria-hidden="true">⊣</span><strong>Prevent</strong>Restrict tools, verify authority and require approved information.</div>
@@ -1646,61 +1801,97 @@ description: Use when a frontline employee receives a report of repeated interne
             </div>
             <h3>Who does what?</h3>
             <div class="role-grid"><div><strong>Control owner</strong>Implements, maintains and reviews a specific safeguard.</div><div><strong>Human reviewer</strong>Performs a defined oversight decision with sufficient information, competence, authority and time.</div><div><strong>Accountable organisation</strong>Remains answerable for the system, its operating conditions and its consequences.</div></div>
-            <h3>What should monitoring reveal?</h3>
-            <div class="monitor-grid"><div><strong>Performance</strong>Is the system doing what was intended?</div><div><strong>Distribution of harm</strong>Who experiences errors or disadvantage?</div><div><strong>Control effectiveness</strong>Are safeguards operating and changing outcomes?</div><div><strong>Complaints and redress</strong>Can affected people be heard and supported?</div><div><strong>Thresholds</strong>When must use be escalated, paused or stopped?</div></div>
             <details><summary>Risk and harm are related but distinct</summary><div class="details-body"><p>A <strong>risk</strong> is the possibility of an unacceptable outcome. A <strong>harm</strong> is the negative consequence experienced by a person, organisation, community or society. Controls can target the probability of the event, the severity of the consequence, or both.</p></div></details>
             <div class="quick-check section-check" data-answer="0" data-explanation="A control without an owner may exist on paper yet fail in operation. Ownership establishes who implements, reviews, escalates and remains answerable for it."><div class="question-number">Pause and check</div><h3>An organisation specifies a monthly bias review but assigns no role to perform or act on it. What is the immediate weakness?</h3><div class="choices"><button class="choice">The control has no accountable owner.</button><button class="choice">The organisation selected the wrong principle.</button><button class="choice">The monitoring interval is automatically too long for every AI system.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
+          <section id="w9-monitoring" class="required-section" data-stage="2">
+            <h2><span class="w9-section-icon" aria-hidden="true">◎</span>How will the organisation know when action is required? <span class="section-time">About 3 min</span></h2>
+            <p>Monitoring tests whether the intended benefit is being achieved, whether controls are working and whether unacceptable outcomes are emerging. It must connect evidence to thresholds, decisions and remedies.</p>
+            <h3>What should monitoring reveal?</h3>
+            <div class="monitor-grid"><div><strong>Performance</strong>Is the system doing what was intended?</div><div><strong>Distribution of harm</strong>Who experiences errors or disadvantage?</div><div><strong>Control effectiveness</strong>Are safeguards operating and changing outcomes?</div><div><strong>Complaints and redress</strong>Can affected people be heard and supported?</div><div><strong>Thresholds</strong>When must use be escalated, paused or stopped?</div></div>
+            <div class="feedback-loop"><strong>This is a cycle.</strong> Monitoring, incidents and stakeholder feedback may reveal a new harm, a failed control or a missing perspective. That evidence sends the organisation back through the earlier questions.</div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="Average performance can conceal concentrated harm. Monitoring should examine who experiences errors, whether controls change outcomes and whether thresholds for escalation or stopping have been reached."><div class="question-number">Pause and check</div><h3>An AI service meets its overall accuracy target, but complaints are rising sharply among one affected group. What should the organisation conclude?</h3><div class="choices"><button class="choice">The accuracy target establishes that the system and its controls are working acceptably.</button><button class="choice">Aggregate performance is insufficient; the distribution of harm and control effectiveness require investigation.</button><button class="choice">Complaints matter only if the system's overall accuracy later falls below target.</button></div><div class="feedback" aria-live="polite"></div></div>
+          </section>
+
           <section id="w9-robocall" class="required-section" data-stage="3">
-            <h2><span class="w9-section-icon" aria-hidden="true">☎</span>Who is responsible when synthetic media deceives? <span class="section-time">About 6 min · includes 3 min reading</span></h2>
+            <h2><span class="w9-section-icon" aria-hidden="true">☎</span>Who is responsible when synthetic media deceives? <span class="section-time">About 8 min · includes required video and reading</span></h2>
             <div class="required-case-layout">
-              <article class="case"><figure class="case-photo"><img src="assets/week-9-robocall.jpg" alt="Illustrative close view of a smartphone receiving an unknown call beside election material." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><div class="case-illustration safety" aria-hidden="true">☎</div><h3>AI-generated political robocall</h3><div class="case-mechanism" aria-label="The robocall pathway moved from synthetic voice generation, through spoofed telephone distribution, to voter deception and regulatory response."><div><span class="mechanism-icon" aria-hidden="true">◖</span><strong>Synthetic voice</strong><small>A recognisable public figure was imitated.</small></div><div><span class="mechanism-icon" aria-hidden="true">☎</span><strong>Spoofed distribution</strong><small>The call appeared to come from a trusted source.</small></div><div><span class="mechanism-icon" aria-hidden="true">!</span><strong>Public consequence</strong><small>Voters received deceptive election information.</small></div></div><p><strong>The situation:</strong> An AI-generated imitation of Joe Biden’s voice encouraged recipients not to vote in the 2024 New Hampshire primary. Caller information was spoofed.</p><p><strong>What AI was used for:</strong> Synthetic voice made the message sound as though it came from a recognisable public figure.</p><p><strong>What happened next:</strong> US regulators investigated the communications chain and took enforcement action.</p></article>
+              <article class="case"><figure class="case-photo"><img src="assets/week-9-robocall.jpg" alt="Illustrative close view of a smartphone receiving an unknown call beside election material." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><h3>AI-generated political robocall</h3><div class="case-mechanism" aria-label="The robocall pathway moved from synthetic voice generation, through spoofed telephone distribution, to voter deception and regulatory response."><div><span class="mechanism-icon" aria-hidden="true">◖</span><strong>Synthetic voice</strong><small>A recognisable public figure was imitated.</small></div><div><span class="mechanism-icon" aria-hidden="true">☎</span><strong>Spoofed distribution</strong><small>The call appeared to come from a trusted source.</small></div><div><span class="mechanism-icon" aria-hidden="true">!</span><strong>Public consequence</strong><small>Voters received deceptive election information.</small></div></div><p><strong>The situation:</strong> An AI-generated imitation of Joe Biden’s voice encouraged recipients not to vote in the 2024 New Hampshire primary. Caller information was spoofed.</p><p><strong>What AI was used for:</strong> Synthetic voice made the message sound as though it came from a recognisable public figure.</p><p><strong>What happened next:</strong> US regulators investigated the communications chain and took enforcement action.</p></article>
               <div class="case-anchor-trace"><h3>Trace responsibility through the case</h3><div class="case-trace-grid"><div class="case-trace-step"><strong>1 · Principle</strong><span>Transparency, human-centred values and accountability define the expected outcome.</span></div><div class="case-trace-step"><strong>2 · Stakeholders</strong><span>Voters, candidates, election officials and communications providers experience different consequences.</span></div><div class="case-trace-step"><strong>3 · Risk or harm</strong><span>Deception may interfere with informed political participation and public trust.</span></div><div class="case-trace-step"><strong>4 · Controls</strong><span>Authentication, disclosure, traceability and rapid response interrupt the pathway to harm.</span></div><div class="case-trace-step"><strong>5 · Owner</strong><span>Responsibility must be assigned across the sender and organisations transmitting the call.</span></div><div class="case-trace-step"><strong>6 · Monitor and redress</strong><span>Detect spoofing and complaints, preserve evidence, stop dissemination and communicate corrections.</span></div></div><p class="case-source"><strong>Read, about 3 min:</strong> the opening summary, “Background” and “Enforcement Bureau Action”. <a href="https://docs.fcc.gov/public/attachments/DOC-403529A1.pdf" target="_blank" rel="noopener">Open the focused FCC reading ↗</a></p></div>
+            </div>
+            <div class="media-lesson" id="w9-video-robocall">
+              <div class="video-frame" data-video-id="5VVgDQRIuBo" data-video-url="https://www.youtube.com/watch?v=5VVgDQRIuBo"><iframe data-src="https://www.youtube.com/embed/5VVgDQRIuBo?rel=0" title="CBS News report featuring the AI-generated Biden robocall sent before the New Hampshire primary" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+              <div class="media-guidance"><div class="type">REQUIRED VIDEO · CBS NEWS</div><h3>Hear how synthetic media entered the communications chain</h3><p>Listen for the combination of voice imitation, apparent source and misleading instruction. Which organisations could have interrupted the pathway?</p><p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=5VVgDQRIuBo" target="_blank" rel="noopener">open the report on YouTube ↗</a>.</p></div>
             </div>
             <div class="quick-check section-check" data-answer="1" data-explanation="Disclosure helps recipients interpret synthetic media, while authentication, traceability and response mechanisms address spoofing, accountability and continuing dissemination across the communications chain."><div class="question-number">Pause and check</div><h3>Which response best addresses the robocall as a system-level problem?</h3><div class="choices"><button class="choice">Require the voice generator to display a warning to its operator before any audio can be created or exported.</button><button class="choice">Combine disclosure, caller authentication, traceability and rapid response.</button><button class="choice">Prohibit every use of synthetic speech, including authorised accessibility uses.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w9-bunnings" class="required-section" data-stage="3">
-            <h2><span class="w9-section-icon" aria-hidden="true">◎</span>Can a legitimate purpose excuse weak governance? <span class="section-time">About 6 min · includes 3 min reading</span></h2>
+            <h2><span class="w9-section-icon" aria-hidden="true">◎</span>Can a legitimate purpose excuse weak governance? <span class="section-time">About 9 min · includes required video and reading</span></h2>
             <div class="required-case-layout">
-              <article class="case"><figure class="case-photo"><img src="assets/week-9-facial-recognition.jpg" alt="Illustrative view of a ceiling security camera monitoring the entrance to a generic retail store." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><div class="case-illustration public" aria-hidden="true">◎</div><h3>Bunnings facial recognition</h3><div class="case-mechanism" aria-label="The facial-recognition pathway moved from camera capture, through comparison with a watchlist, to a security flag requiring governed human handling."><div><span class="mechanism-icon" aria-hidden="true">▣</span><strong>Capture</strong><small>A camera image creates biometric information.</small></div><div><span class="mechanism-icon" aria-hidden="true">◎</span><strong>Compare</strong><small>The system checks the image against people of security concern.</small></div><div><span class="mechanism-icon" aria-hidden="true">⚑</span><strong>Handle a match</strong><small>Notice, proportionality, access and review shape responsible use.</small></div></div><p><strong>The situation:</strong> Bunnings used facial-recognition technology for a limited security purpose.</p><p><strong>What AI was used for:</strong> The system compared facial images to help identify people of security concern.</p><p><strong>What happened next:</strong> The 2026 Tribunal decision accepted the limited purpose while affirming failures in notification and privacy governance.</p></article>
+              <article class="case"><figure class="case-photo"><img src="assets/week-9-facial-recognition.jpg" alt="Illustrative view of a ceiling security camera monitoring the entrance to a generic retail store." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><h3>Bunnings facial recognition</h3><div class="case-mechanism" aria-label="The facial-recognition pathway moved from camera capture, through comparison with a watchlist, to a security flag requiring governed human handling."><div><span class="mechanism-icon" aria-hidden="true">▣</span><strong>Capture</strong><small>A camera image creates biometric information.</small></div><div><span class="mechanism-icon" aria-hidden="true">◎</span><strong>Compare</strong><small>The system checks the image against people of security concern.</small></div><div><span class="mechanism-icon" aria-hidden="true">⚑</span><strong>Handle a match</strong><small>Notice, proportionality, access and review shape responsible use.</small></div></div><p><strong>The situation:</strong> Bunnings used facial-recognition technology for a limited security purpose.</p><p><strong>What AI was used for:</strong> The system compared facial images to help identify people of security concern.</p><p><strong>What happened next:</strong> The 2026 Tribunal decision accepted the limited purpose while affirming failures in notification and privacy governance.</p></article>
               <div class="case-anchor-trace"><h3>Complete the second half of the pathway</h3><p>The principle, stakeholders and harm are provided. Before opening the final three stages, predict what would turn these concerns into organisational action.</p><div class="case-trace-grid"><div class="case-trace-step"><strong>1 · Principle</strong><span>Privacy, transparency, fairness and accountability define responsible use.</span></div><div class="case-trace-step"><strong>2 · Stakeholders</strong><span>Customers, employees and people flagged by the system encounter different impacts.</span></div><div class="case-trace-step"><strong>3 · Risk or harm</strong><span>People may be identified or tracked without adequate notice or governance.</span></div><div class="case-trace-step prompt-step"><strong>4 · Controls</strong><span>What mechanisms would address necessity, notice, data use and review?</span><details><summary>Reveal one response</summary><div class="details-body">Assess necessity and proportionality, give clear notice, restrict data use and require meaningful review.</div></details></div><div class="case-trace-step prompt-step"><strong>5 · Owner</strong><span>Which organisational role should maintain these privacy and security controls?</span><details><summary>Reveal one response</summary><div class="details-body">Assign identifiable privacy and security owners with authority to review and change the use.</div></details></div><div class="case-trace-step prompt-step"><strong>6 · Monitor and redress</strong><span>What evidence and remedies would reveal whether the use remains acceptable?</span><details><summary>Reveal one response</summary><div class="details-body">Audit use and false matches, review complaints and provide correction or deletion pathways where required.</div></details></div></div><p class="case-source"><strong>Read, about 3 min:</strong> the complete short OAIC statement. <a href="https://www.oaic.gov.au/news/media-centre/oaic-statement-on-administrative-review-tribunals-bunnings-decision" target="_blank" rel="noopener">Open the OAIC statement ↗</a></p></div>
+            </div>
+            <div class="media-lesson" id="w9-video-bunnings">
+              <div class="video-frame" data-video-id="PpYwiH_4vVk" data-video-url="https://www.youtube.com/watch?v=PpYwiH_4vVk"><iframe data-src="https://www.youtube.com/embed/PpYwiH_4vVk?rel=0" title="ABC News Australia report on the privacy finding concerning Bunnings facial recognition" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+              <div class="media-guidance"><div class="type">REQUIRED VIDEO · ABC NEWS AUSTRALIA</div><h3>Examine purpose, proportionality and privacy</h3><p>Listen for the intended security benefit, the biometric information collected and the competing views about whether the implementation was proportionate.</p><p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=PpYwiH_4vVk" target="_blank" rel="noopener">open the report on YouTube ↗</a>.</p></div>
             </div>
             <div class="quick-check section-check" data-answer="0" data-explanation="A legitimate objective does not settle whether the use is necessary, proportionate or governed responsibly. Notice, restricted data use, review and privacy accountability remain material."><div class="question-number">Pause and check</div><h3>What does acceptance of a legitimate security purpose establish?</h3><div class="choices"><button class="choice">The purpose may be valid, while the implementation still requires privacy and governance controls.</button><button class="choice">Once the purpose is accepted, transparency, proportionality and privacy controls are no longer material to the decision.</button><button class="choice">The AI system becomes responsible for any security outcome it produces.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w9-uber" class="required-section" data-stage="3">
-            <h2><span class="w9-section-icon" aria-hidden="true">◇</span>When does human oversight become an empty label? <span class="section-time">About 10 min · includes 4 min reading</span></h2>
+            <h2><span class="w9-section-icon" aria-hidden="true">◇</span>When does human oversight become an empty label? <span class="section-time">About 12 min · includes required video and reading</span></h2>
             <div class="required-case-layout">
-              <article class="case"><div class="case-illustration safety" aria-hidden="true">◇</div><h3>Uber automated vehicle crash</h3><div class="case-mechanism" aria-label="The automated-driving pathway moved from sensing the road, through classification and path prediction, to an unsafe response and late human intervention."><div><span class="mechanism-icon" aria-hidden="true">⌾</span><strong>Sense</strong><small>The system detected an object in the roadway.</small></div><div><span class="mechanism-icon" aria-hidden="true">◇</span><strong>Classify and predict</strong><small>Its classification and path prediction changed repeatedly.</small></div><div><span class="mechanism-icon" aria-hidden="true">!</span><strong>Respond</strong><small>Emergency braking did not occur and intervention came too late.</small></div></div><p><strong>The situation:</strong> An automated test vehicle struck and killed a pedestrian in Tempe, Arizona.</p><p><strong>What AI was used for:</strong> The automated driving system detected objects and attempted to classify them and predict their paths.</p><p><strong>What happened next:</strong> The system failed to classify and predict the pedestrian’s path correctly. Emergency braking did not occur, and the safety operator intervened too late.</p></article>
-              <div class="diagnostic-challenge"><h3>Diagnose the responsibility failure</h3><p>Apply the six-stage anchor yourself before opening the analysis.</p><div class="diagnostic-prompts"><div>Which principle and stakeholder interests were most consequential?</div><div>Which controls failed to interrupt the pathway to harm?</div><div>What should have triggered escalation, pausing or stopping?</div></div><details><summary>Reveal one defensible analysis</summary><div class="details-body"><p><strong>Principles and stakeholders:</strong> reliability and safety, accountability and human-centred values were material for pedestrians, road users, safety operators and the testing organisation.</p><p><strong>Controls and ownership:</strong> safe system design, emergency response, independent assurance and meaningful operator intervention required accountable system-safety and operational owners.</p><p><strong>Monitoring and response:</strong> incidents, near misses and operator disengagement should inform explicit escalation and stopping thresholds, followed by investigation and support for affected people.</p></div></details><p class="case-source"><strong>Key lesson:</strong> naming a human overseer does not create an effective control. The person also needs attention, information, authority, time and organisational support.</p><p><strong>Read, about 4 min:</strong> “Executive Summary” and “Probable Cause” in the report linked from the investigation page. <a href="https://www.ntsb.gov/investigations/pages/HWY18MH010.aspx" target="_blank" rel="noopener">Open the NTSB investigation ↗</a></p></div>
+              <article class="case"><figure class="case-photo"><img src="assets/week-9-uber.jpg" alt="Illustrative automated-vehicle testing control room monitoring a test vehicle on a closed road." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><h3>Uber automated vehicle crash</h3><div class="case-mechanism" aria-label="The automated-driving pathway moved from sensing the road, through classification and path prediction, to an unsafe response and late human intervention."><div><span class="mechanism-icon" aria-hidden="true">⌾</span><strong>Sense</strong><small>The system detected an object in the roadway.</small></div><div><span class="mechanism-icon" aria-hidden="true">◇</span><strong>Classify and predict</strong><small>Its classification and path prediction changed repeatedly.</small></div><div><span class="mechanism-icon" aria-hidden="true">!</span><strong>Respond</strong><small>Emergency braking did not occur and intervention came too late.</small></div></div><p><strong>The situation:</strong> An automated test vehicle struck and killed a pedestrian in Tempe, Arizona.</p><p><strong>What AI was used for:</strong> The automated driving system detected objects and attempted to classify them and predict their paths.</p><p><strong>What happened next:</strong> The system failed to classify and predict the pedestrian’s path correctly. Emergency braking did not occur, and the safety operator intervened too late.</p></article>
+              <div class="case-anchor-trace"><h3>Diagnose the complete pathway</h3><p>Use the six-stage anchor before opening the worked trace.</p><div class="case-trace-grid"><div class="case-trace-step prompt-step"><strong>1 · Principle</strong><span>Which principles define acceptable operation?</span></div><div class="case-trace-step prompt-step"><strong>2 · Stakeholders</strong><span>Who depended on safe system and operator performance?</span></div><div class="case-trace-step prompt-step"><strong>3 · Risk or harm</strong><span>What pathway converted uncertainty into severe harm?</span></div><div class="case-trace-step prompt-step"><strong>4 · Controls</strong><span>Which safeguards should have interrupted that pathway?</span></div><div class="case-trace-step prompt-step"><strong>5 · Owner</strong><span>Who needed authority over safety and testing decisions?</span></div><div class="case-trace-step prompt-step"><strong>6 · Monitor and redress</strong><span>What evidence should have triggered pausing or stopping?</span></div></div><details><summary>Reveal one defensible trace</summary><div class="details-body"><p><strong>Principles and stakeholders:</strong> reliability and safety, accountability and human-centred values were material for pedestrians, road users, safety operators and the testing organisation.</p><p><strong>Controls and ownership:</strong> safe system design, emergency response, independent assurance and meaningful operator intervention required accountable system-safety and operational owners.</p><p><strong>Monitoring and response:</strong> incidents, near misses and operator disengagement should inform explicit escalation and stopping thresholds, followed by investigation and support for affected people.</p></div></details><p class="case-source"><strong>Read, about 4 min:</strong> “Executive Summary” and “Probable Cause” in the report linked from the investigation page. <a href="https://www.ntsb.gov/investigations/pages/HWY18MH010.aspx" target="_blank" rel="noopener">Open the NTSB investigation ↗</a></p></div>
+            </div>
+            <div class="media-lesson" id="w9-video-uber">
+              <div class="video-frame" data-video-id="_nb_sIzwipg" data-video-url="https://www.youtube.com/watch?v=_nb_sIzwipg"><iframe data-src="https://www.youtube.com/embed/_nb_sIzwipg?rel=0" title="News report on the NTSB investigation into the fatal Uber automated vehicle crash" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+              <div class="media-guidance"><div class="type">REQUIRED VIDEO · ARIZONA'S FAMILY</div><h3>See why human presence did not guarantee oversight</h3><p>Watch for the operating conditions faced by the safety driver. What information, attention, authority and response time would meaningful intervention have required?</p><p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=_nb_sIzwipg" target="_blank" rel="noopener">open the report on YouTube ↗</a>.</p></div>
             </div>
             <div class="good-practice"><h3>What could responsible implementation look like?</h3><p>In a hypothetical redesign informed by the case, uncertain object classification would trigger a safe response rather than continued normal operation. The safety operator would receive clear hazard information, sufficient time and authority to intervene, and manageable monitoring conditions. Near misses and disengagement would be reviewed against predefined thresholds, with independent safety ownership able to pause testing.</p></div>
             <div class="quick-check section-check" data-answer="1" data-explanation="Human presence becomes a control only when the person can understand the situation, see relevant evidence, exercise judgement and intervene with sufficient authority and time."><div class="question-number">Pause and check</div><h3>Why was the presence of a safety operator insufficient by itself?</h3><div class="choices"><button class="choice">A human operator can never provide meaningful oversight of an automated vehicle under any operating conditions.</button><button class="choice">Presence alone did not ensure effective attention, information and timely intervention.</button><button class="choice">The operator needed more general ethics training, regardless of the operating interface or intervention time.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
-          <section id="w9-air-canada" class="optional-section" data-stage="3">
-            <h2><span class="w9-section-icon" aria-hidden="true">▣</span>Who owns incorrect AI guidance? <span class="section-time">Optional · about 5 min</span></h2>
-            <div class="grid two"><article class="case"><div class="case-illustration" aria-hidden="true">▣</div><h3>Air Canada chatbot</h3><p><strong>The situation:</strong> A customer sought information about a bereavement fare.</p><p><strong>What AI was used for:</strong> A chatbot provided customer-service guidance through Air Canada’s website.</p><p><strong>What happened next:</strong> The customer relied on incorrect guidance, and the Civil Resolution Tribunal held the organisation responsible for the information provided.</p></article><div class="card"><div class="icon-badge" aria-hidden="true">?</div><h3>Responsibility lens</h3><p><strong>Principles:</strong> reliability, transparency and accountability.</p><p><strong>Key lesson:</strong> organisations remain accountable for AI-delivered guidance and need controls for conflicting, outdated or uncertain information.</p><p><strong>Primary source, about 3 min:</strong> read paragraphs 23–30 of <em>Moffatt v Air Canada</em>, 2024 BCCRT 149. Focus on the tribunal’s treatment of the chatbot as part of Air Canada’s website and its finding that the airline failed to take reasonable care to ensure accuracy.</p><a href="https://www.canlii.org/en/bc/bccrt/doc/2024/2024bccrt149/2024bccrt149.html" target="_blank" rel="noopener">Open the tribunal decision on CanLII ↗</a></div></div>
+          <section id="w9-air-canada" class="required-section" data-stage="3">
+            <h2><span class="w9-section-icon" aria-hidden="true">▣</span>Who owns incorrect AI guidance? <span class="section-time">About 5 min · includes required video</span></h2>
+            <div class="required-case-layout">
+              <article class="case"><figure class="case-photo"><img src="assets/week-9-air-canada.jpg" alt="Illustrative airline customer-service employee and traveller reviewing digital policy guidance." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><h3>Air Canada chatbot</h3><div class="case-mechanism" aria-label="The guidance pathway moved from a customer question, through chatbot policy guidance, to customer reliance and organisational responsibility."><div><span class="mechanism-icon" aria-hidden="true">?</span><strong>Ask</strong><small>A customer sought fare guidance.</small></div><div><span class="mechanism-icon" aria-hidden="true">▣</span><strong>Advise</strong><small>The chatbot supplied incorrect policy information.</small></div><div><span class="mechanism-icon" aria-hidden="true">!</span><strong>Rely</strong><small>The customer acted on the guidance.</small></div></div><p><strong>The situation:</strong> A customer sought information about a bereavement fare.</p><p><strong>What AI was used for:</strong> A chatbot provided customer-service guidance through Air Canada’s website.</p><p><strong>What happened next:</strong> The customer relied on incorrect guidance, and the Civil Resolution Tribunal held the organisation responsible for the information provided.</p></article>
+              <div class="case-anchor-trace"><h3>Locate organisational responsibility</h3><div class="case-trace-grid"><div class="case-trace-step"><strong>1 · Principle</strong><span>Reliability, transparency and accountability apply to customer guidance.</span></div><div class="case-trace-step"><strong>2 · Stakeholders</strong><span>Customers, frontline staff and policy owners depend on consistent information.</span></div><div class="case-trace-step"><strong>3 · Risk or harm</strong><span>Incorrect guidance may cause financial loss and deny expected support.</span></div><div class="case-trace-step"><strong>4 · Controls</strong><span>Use approved policy sources, conflict checks, review and clear escalation.</span></div><div class="case-trace-step prompt-step"><strong>5 · Owner</strong><span>Who must keep the guidance accurate and resolve conflicts?</span><details><summary>Reveal one response</summary><div class="details-body">The organisation needs identifiable policy, service and system owners. Responsibility cannot be transferred to the chatbot.</div></details></div><div class="case-trace-step prompt-step"><strong>6 · Monitor and redress</strong><span>What evidence and remedy would reveal or correct harmful guidance?</span><details><summary>Reveal one response</summary><div class="details-body">Monitor conflicting answers and complaints, correct the information, preserve the customer’s challenge pathway and provide an appropriate remedy.</div></details></div></div><p class="case-source"><strong>Read, about 3 min:</strong> paragraphs 23–30 of <em>Moffatt v Air Canada</em>, 2024 BCCRT 149. <a href="https://www.canlii.org/en/bc/bccrt/doc/2024/2024bccrt149/2024bccrt149.html" target="_blank" rel="noopener">Open the tribunal decision on CanLII ↗</a></p></div>
+            </div>
+            <div class="media-lesson" id="w9-video-air-canada">
+              <div class="video-frame" data-video-id="avEPVMmjRM0" data-video-url="https://www.youtube.com/watch?v=avEPVMmjRM0"><iframe data-src="https://www.youtube.com/embed/avEPVMmjRM0?rel=0" title="ABC News report on Air Canada being held responsible for incorrect chatbot guidance" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+              <div class="media-guidance"><div class="type">REQUIRED VIDEO · ABC NEWS</div><h3>Locate responsibility for AI-delivered guidance</h3><p>Listen for the relationship between the chatbot, the organisation's published policy and the customer's reliance. Who should have owned the accuracy of the answer?</p><p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=avEPVMmjRM0" target="_blank" rel="noopener">open the report on YouTube ↗</a>.</p></div>
+            </div>
+            <div class="quick-check section-check" data-answer="1" data-explanation="The organisation remained responsible for information delivered through its own chatbot. A responsible implementation therefore requires ownership and controls for the accuracy, consistency and maintenance of AI-delivered guidance."><div class="question-number">Case check 4 of 6</div><h3>What is the strongest responsible AI lesson from the Air Canada case?</h3><div class="choices"><button class="choice">A disclaimer transfers responsibility for chatbot guidance to the customer.</button><button class="choice">The organisation remains accountable for guidance delivered through its AI-enabled service.</button><button class="choice">Customer-service chatbots should never provide information about organisational policies.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
-          <section id="w9-williams" class="optional-section" data-stage="3">
-            <h2><span class="w9-section-icon" aria-hidden="true">⌾</span>How can uncertain AI evidence become harmful? <span class="section-time">Optional · includes video</span></h2>
-            <article class="case"><div class="case-illustration safety" aria-hidden="true">⌾</div><h3>Robert Williams</h3><p><strong>The situation:</strong> Police investigated a theft using a poor-quality surveillance image.</p><p><strong>What AI was used for:</strong> Facial recognition generated a possible match.</p><p><strong>What happened next:</strong> Police treated the output as stronger evidence than it was, contributing to a wrongful arrest.</p></article>
+          <section id="w9-williams" class="required-section" data-stage="3">
+            <h2><span class="w9-section-icon" aria-hidden="true">⌾</span>How can uncertain AI evidence become harmful? <span class="section-time">About 4 min · includes required video</span></h2>
+            <div class="required-case-layout">
+              <article class="case"><figure class="case-photo"><img src="assets/week-9-williams.jpg" alt="Illustrative evidence-review setting with analysts comparing a poor-quality surveillance image and an uncertain facial-recognition match." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><h3>Robert Williams</h3><div class="case-mechanism" aria-label="The evidence pathway moved from a poor-quality image, through a possible facial-recognition match, to overconfident human use and wrongful arrest."><div><span class="mechanism-icon" aria-hidden="true">▧</span><strong>Capture</strong><small>A poor-quality surveillance image was used.</small></div><div><span class="mechanism-icon" aria-hidden="true">⌾</span><strong>Suggest</strong><small>Facial recognition produced a possible match.</small></div><div><span class="mechanism-icon" aria-hidden="true">!</span><strong>Over-rely</strong><small>Uncertain output was treated as stronger evidence.</small></div></div><p><strong>The situation:</strong> Police investigated a theft using a poor-quality surveillance image.</p><p><strong>What AI was used for:</strong> Facial recognition generated a possible match.</p><p><strong>What happened next:</strong> Police treated the output as stronger evidence than it was, contributing to a wrongful arrest.</p></article>
+              <div class="case-anchor-trace"><h3>Preserve uncertainty through the pathway</h3><div class="case-trace-grid"><div class="case-trace-step"><strong>1 · Principle</strong><span>Fairness, reliability, transparency, contestability and accountability are implicated.</span></div><div class="case-trace-step"><strong>2 · Stakeholders</strong><span>The person matched, investigators, the public and affected communities experience different risks.</span></div><div class="case-trace-step prompt-step"><strong>3 · Risk or harm</strong><span>Where did a possible match become consequential evidence?</span><details><summary>Reveal one response</summary><div class="details-body">Uncertainty was lost when a possible match was treated as identification and used to support arrest.</div></details></div><div class="case-trace-step prompt-step"><strong>4 · Controls</strong><span>What should prevent over-reliance?</span><details><summary>Reveal one response</summary><div class="details-body">Require independent corroboration, communicate uncertainty and prohibit a match from serving as sole identification evidence.</div></details></div><div class="case-trace-step"><strong>5 · Owner</strong><span>Investigative leaders and system owners must govern evidence use and review.</span></div><div class="case-trace-step"><strong>6 · Monitor and redress</strong><span>Audit false matches, review affected groups and provide correction and remedy pathways.</span></div></div><p class="case-source"><strong>Key lesson:</strong> an uncertain model output must remain uncertain throughout the human decision process.</p></div>
+            </div>
             <div class="media-lesson" id="w9-video-williams">
               <div class="video-frame" data-video-id="Tfgi9A9PfLU" data-video-url="https://www.youtube.com/watch?v=Tfgi9A9PfLU"><iframe data-src="https://www.youtube.com/embed/Tfgi9A9PfLU?rel=0" title="Robert Williams describes his wrongful arrest following a facial recognition match" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
-              <div class="media-guidance"><div class="type">OPTIONAL VIDEO · ACLU</div><h3>Robert Williams’ account</h3><p>Listen for where uncertainty was lost and where independent corroboration should have occurred.</p><p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=Tfgi9A9PfLU" target="_blank" rel="noopener">open the video on YouTube ↗</a>.</p></div>
+              <div class="media-guidance"><div class="type">REQUIRED VIDEO · ACLU</div><h3>Robert Williams’ account</h3><p>Listen for where uncertainty was lost and where independent corroboration should have occurred.</p><p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=Tfgi9A9PfLU" target="_blank" rel="noopener">open the video on YouTube ↗</a>.</p></div>
             </div>
+            <div class="quick-check section-check" data-answer="2" data-explanation="A possible facial-recognition match is uncertain evidence. Independent corroboration and a decision process that preserves uncertainty are needed before consequential action."><div class="question-number">Case check 5 of 6</div><h3>Which control most directly addresses the failure illustrated by the Robert Williams case?</h3><div class="choices"><button class="choice">Use a larger facial-recognition model before presenting any match.</button><button class="choice">Allow the system to make the arrest decision when its confidence exceeds a fixed threshold.</button><button class="choice">Require independent corroboration and prevent a possible match from being treated as identification.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
-          <section id="w9-robodebt" class="optional-section" data-stage="3">
-            <h2><span class="w9-section-icon" aria-hidden="true">$</span>How can automation create systemic harm? <span class="section-time">Optional · about 8 min</span></h2>
-            <div class="grid two"><article class="case"><div class="case-illustration public" aria-hidden="true">$</div><h3>Robodebt</h3><p><strong>The situation:</strong> Government debt-recovery processes affected people receiving income support.</p><p><strong>What automation was used for:</strong> Income averaging was used within automated debt identification and recovery processes.</p><p><strong>What happened next:</strong> The scheme contributed to unlawful debt assertions and severe impacts on affected people.</p><p class="lesson">This is an automated decision-making case rather than a generative AI case. It reveals organisational responsibilities that also apply to newer AI systems.</p></article><div class="media-card"><div><div class="type">OPTIONAL READING</div><h3>Systemic responsibility</h3><p>Read the report-page overview and Recommendations 10.1, 17.1 and 17.2.</p></div><a href="https://robodebt.royalcommission.gov.au/publications/report" target="_blank" rel="noopener">Open the Royal Commission material ↗</a></div></div>
+          <section id="w9-robodebt" class="required-section" data-stage="3">
+            <h2><span class="w9-section-icon" aria-hidden="true">$</span>How can automation create systemic harm? <span class="section-time">About 6 min · includes required video</span></h2>
+            <div class="required-case-layout">
+              <article class="case"><figure class="case-photo"><img src="assets/week-9-robodebt.jpg" alt="Illustrative public-service team reviewing automated debt calculations and case files without showing personal information." loading="lazy" decoding="async"><figcaption>Illustrative image</figcaption></figure><h3>Robodebt</h3><div class="case-mechanism" aria-label="The Robodebt pathway moved from income data, through automated averaging and debt assertion, to large-scale impact on people receiving income support."><div><span class="mechanism-icon" aria-hidden="true">▤</span><strong>Input</strong><small>Income information entered an administrative process.</small></div><div><span class="mechanism-icon" aria-hidden="true">÷</span><strong>Average</strong><small>Automation inferred fortnightly income.</small></div><div><span class="mechanism-icon" aria-hidden="true">$</span><strong>Assert debt</strong><small>People faced debt-recovery action at scale.</small></div></div><p><strong>The situation:</strong> Government debt-recovery processes affected people receiving income support.</p><p><strong>What automation was used for:</strong> Income averaging was used within automated debt identification and recovery processes.</p><p><strong>What happened next:</strong> The scheme contributed to unlawful debt assertions and severe impacts on affected people.</p><p class="lesson">This automated decision-making case reveals organisational responsibilities that also apply to newer AI systems.</p></article>
+              <div class="case-anchor-trace"><h3>Trace systemic responsibility</h3><p>Complete the six-stage pathway before opening one defensible analysis.</p><div class="case-trace-grid"><div class="case-trace-step prompt-step"><strong>1 · Principle</strong><span>Which principles were placed at risk?</span></div><div class="case-trace-step prompt-step"><strong>2 · Stakeholders</strong><span>Whose circumstances and perspectives were missing?</span></div><div class="case-trace-step prompt-step"><strong>3 · Risk or harm</strong><span>How could an administrative method create harm at scale?</span></div><div class="case-trace-step prompt-step"><strong>4 · Controls</strong><span>What should verify legality, evidence and individual circumstances?</span></div><div class="case-trace-step prompt-step"><strong>5 · Owner</strong><span>Who remains accountable across policy, operations and technology?</span></div><div class="case-trace-step prompt-step"><strong>6 · Monitor and redress</strong><span>What evidence should trigger correction, suspension and remedy?</span></div></div><details><summary>Reveal one defensible trace</summary><div class="details-body"><p><strong>Principles and stakeholders:</strong> human-centred values, fairness, reliability, transparency, contestability and accountability were material for people receiving income support and the public institutions serving them.</p><p><strong>Controls and ownership:</strong> legal review, evidence validation, consideration of individual circumstances and accessible challenge pathways required accountable policy, operational and technology owners.</p><p><strong>Monitoring and redress:</strong> complaints, overturned debts and evidence of hardship should have triggered correction, suspension and remedy.</p></div></details><p class="case-source"><strong>Key lesson:</strong> responsible automation depends on the complete organisational system, including policy, evidence, ownership, challenge and redress.</p></div>
+            </div>
+            <div class="media-card"><div><div class="type">OPTIONAL READING</div><h3>Systemic responsibility</h3><p>Read the report-page overview and Recommendations 10.1, 17.1 and 17.2.</p></div><a href="https://robodebt.royalcommission.gov.au/publications/report" target="_blank" rel="noopener">Open the Royal Commission material ↗</a></div>
             <div class="media-lesson" id="w9-video-robodebt">
               <div class="video-frame" data-video-id="zDi3Tsc33iQ" data-video-url="https://www.youtube.com/watch?v=zDi3Tsc33iQ"><iframe data-src="https://www.youtube.com/embed/zDi3Tsc33iQ?rel=0" title="ABC News report on the Robodebt Royal Commission findings and referrals" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
-              <div class="media-guidance"><div class="type">OPTIONAL VIDEO · ABC NEWS</div><h3>What did the Commission reveal?</h3><p>Use the report to notice how system design, organisational ownership and human decisions combined to create and sustain harm.</p><p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=zDi3Tsc33iQ" target="_blank" rel="noopener">open the report on YouTube ↗</a>.</p></div>
+              <div class="media-guidance"><div class="type">REQUIRED VIDEO · ABC NEWS</div><h3>What did the Commission reveal?</h3><p>Use the report to notice how system design, organisational ownership and human decisions combined to create and sustain harm.</p><p class="source-note">If the embedded player is unavailable, <a href="https://www.youtube.com/watch?v=zDi3Tsc33iQ" target="_blank" rel="noopener">open the report on YouTube ↗</a>.</p></div>
             </div>
+            <div class="quick-check section-check" data-answer="0" data-explanation="Robodebt illustrates systemic harm produced through the interaction of policy, automation, organisational ownership and weak challenge and redress mechanisms. Model performance alone would not address those conditions."><div class="question-number">Case check 6 of 6</div><h3>Why is Robodebt relevant to responsible AI even though it was not a generative AI system?</h3><div class="choices"><button class="choice">It shows how automated processes, organisational decisions and weak redress can combine to produce harm at scale.</button><button class="choice">It establishes that every automated calculation should be prohibited in government services.</button><button class="choice">It shows that improving model accuracy is sufficient to prevent systemic organisational harm.</button></div><div class="feedback" aria-live="polite"></div></div>
           </section>
 
           <section id="w9-oversight" class="required-section" data-stage="4">
@@ -1755,10 +1946,11 @@ description: Use when a frontline employee receives a report of repeated interne
               <a id="w9-preparation-download-link" download>Download the Word template ↓</a>
             </div>
           </section>
-          <div class="week-recap">
+          <div class="week-recap" data-week-closure="week9" hidden>
             <h3>What should you take from Week 9?</h3>
             <ul><li>Principles provide direction and must be translated into organisational action.</li><li>Responsible implementation connects stakeholders and harms to controls, owners, monitoring and redress.</li><li>Human oversight requires understanding, evidence, judgement, authority, time and organisational support.</li></ul>
           </div>
+          <div class="seminar-celebration" data-week-closure="week9" role="note" hidden><strong>Congratulations, you have completed Week 9.</strong><p>Bring your completed preparation activity. See you in the seminar.</p></div>
         </section>
 
         <section class="glossary page-view" id="glossary" data-view="glossary">
@@ -1825,6 +2017,12 @@ description: Use when a frontline employee receives a report of repeated interne
   </div>
   <button class="top-button" id="top-button" aria-label="Back to top">↑</button>
   <script>
+    document.querySelectorAll('#week9 section.required-section[data-stage="3"]').forEach(section => {
+      const video = section.querySelector(':scope > .media-lesson');
+      const caseLayout = section.querySelector(':scope > .required-case-layout');
+      if (video && caseLayout) section.insertBefore(video, caseLayout);
+    });
+
     document.querySelectorAll('.video-frame').forEach(frame => {
       const iframe = frame.querySelector('iframe');
       if (!iframe) return;
@@ -1871,46 +2069,99 @@ description: Use when a frontline employee receives a report of repeated interne
       });
     });
 
+    function weekPreparationIsUnlocked(weekKey) {
+      const storageKeys = {
+        week7:'infs5706-w7-preparation-correct-v2',
+        week8:'infs5706-w8-preparation-correct-v1',
+        week9:'infs5706-w9-preparation-correct-v1'
+      };
+      return localStorage.getItem(storageKeys[weekKey]) === 'true';
+    }
+
+    function launchCompletionConfetti(weekKey) {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const confettiKey = `infs5706-${weekKey}-completion-confetti-v1`;
+      if (localStorage.getItem(confettiKey) === 'true') return;
+      localStorage.setItem(confettiKey, 'true');
+      const layer = document.createElement('div');
+      layer.className = 'confetti-layer';
+      layer.setAttribute('aria-hidden', 'true');
+      const colours = ['#ffd500', '#231f20', '#1f4e8c', '#e31b23', '#ffffff'];
+      for (let index = 0; index < 52; index += 1) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti-piece';
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.setProperty('--confetti-colour', colours[index % colours.length]);
+        piece.style.setProperty('--confetti-duration', `${2.5 + Math.random() * 1.8}s`);
+        piece.style.setProperty('--confetti-delay', `${Math.random() * .55}s`);
+        piece.style.setProperty('--confetti-drift', `${-90 + Math.random() * 180}px`);
+        piece.style.setProperty('--confetti-spin', `${360 + Math.random() * 900}deg`);
+        if (index % 3 === 0) piece.style.borderRadius = '50%';
+        layer.append(piece);
+      }
+      document.body.append(layer);
+      window.setTimeout(() => layer.remove(), 5000);
+    }
+
+    function revealWeekClosure(weekKey, celebrate = false) {
+      document.querySelectorAll(`[data-week-closure="${weekKey}"], [data-final-week="${weekKey}"]`).forEach(element => {
+        element.hidden = false;
+      });
+      if (celebrate) launchCompletionConfetti(weekKey);
+    }
+
     const week7PreparationDownload = document.getElementById('w7-preparation-download');
     const week7PreparationLink = document.getElementById('w7-preparation-download-link');
-    function updateWeek7PreparationDownload() {
+    function updateWeek7PreparationDownload(celebrate = false) {
       const checks = [...document.querySelectorAll('#w7-knowledge-check .quick-check')];
-      const unlocked = localStorage.getItem('infs5706-w7-preparation-correct-v2') === 'true'
+      const wasUnlocked = weekPreparationIsUnlocked('week7');
+      const unlocked = wasUnlocked
         || (checks.length > 0 && checks.every(check => check.dataset.correct === 'true'));
       if (!unlocked) return;
       localStorage.setItem('infs5706-w7-preparation-correct-v2', 'true');
       week7PreparationDownload.hidden = false;
       week7PreparationLink.href = 'Week 7 Simple Agent Candidate Card.docx';
+      revealWeekClosure('week7', celebrate && !wasUnlocked);
     }
-    document.addEventListener('knowledge-check-attempted', updateWeek7PreparationDownload);
+    document.addEventListener('knowledge-check-attempted', event => {
+      if (event.detail.check.closest('#week7')) updateWeek7PreparationDownload(true);
+    });
     updateWeek7PreparationDownload();
 
     const week8PreparationDownload = document.getElementById('w8-preparation-download');
     const week8PreparationLink = document.getElementById('w8-preparation-download-link');
-    function updateWeek8PreparationDownload() {
+    function updateWeek8PreparationDownload(celebrate = false) {
       const checks = [...document.querySelectorAll('#w8-knowledge-check .quick-check')];
-      const unlocked = localStorage.getItem('infs5706-w8-preparation-correct-v1') === 'true'
+      const wasUnlocked = weekPreparationIsUnlocked('week8');
+      const unlocked = wasUnlocked
         || (checks.length > 0 && checks.every(check => check.dataset.correct === 'true'));
       if (!unlocked) return;
       localStorage.setItem('infs5706-w8-preparation-correct-v1', 'true');
       week8PreparationDownload.hidden = false;
       week8PreparationLink.href = 'Week 8 Agent Architecture Decision Card.docx';
+      revealWeekClosure('week8', celebrate && !wasUnlocked);
     }
-    document.addEventListener('knowledge-check-attempted', updateWeek8PreparationDownload);
+    document.addEventListener('knowledge-check-attempted', event => {
+      if (event.detail.check.closest('#week8')) updateWeek8PreparationDownload(true);
+    });
     updateWeek8PreparationDownload();
 
     const week9PreparationDownload = document.getElementById('w9-preparation-download');
     const week9PreparationLink = document.getElementById('w9-preparation-download-link');
-    function updateWeek9PreparationDownload() {
+    function updateWeek9PreparationDownload(celebrate = false) {
       const checks = [...document.querySelectorAll('#w9-knowledge-check .quick-check')];
-      const unlocked = localStorage.getItem('infs5706-w9-preparation-correct-v1') === 'true'
+      const wasUnlocked = weekPreparationIsUnlocked('week9');
+      const unlocked = wasUnlocked
         || (checks.length > 0 && checks.every(check => check.dataset.correct === 'true'));
       if (!unlocked) return;
       localStorage.setItem('infs5706-w9-preparation-correct-v1', 'true');
       week9PreparationDownload.hidden = false;
       week9PreparationLink.href = 'Week 9 Responsible AI Action Record.docx';
+      revealWeekClosure('week9', celebrate && !wasUnlocked);
     }
-    document.addEventListener('knowledge-check-attempted', updateWeek9PreparationDownload);
+    document.addEventListener('knowledge-check-attempted', event => {
+      if (event.detail.check.closest('#week9')) updateWeek9PreparationDownload(true);
+    });
     updateWeek9PreparationDownload();
 
     const glossaryInput = document.getElementById('glossary-search');
@@ -1923,13 +2174,29 @@ description: Use when a frontline employee receives a report of repeated interne
     });
 
     const topButton = document.getElementById('top-button');
+    const pageReadingProgress = document.getElementById('page-reading-progress');
+    const pageReadingProgressFill = document.getElementById('page-reading-progress-fill');
     let previousScrollY = window.scrollY;
     let scrollingDown = true;
+    let readingProgressFrame = null;
+    function updatePageReadingProgress() {
+      const scrollable = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const percentage = scrollable ? Math.min(100, Math.max(0, (window.scrollY / scrollable) * 100)) : 100;
+      pageReadingProgressFill.style.width = `${percentage}%`;
+      pageReadingProgress.setAttribute('aria-valuenow', String(Math.round(percentage)));
+      readingProgressFrame = null;
+    }
+    function requestPageReadingProgressUpdate() {
+      if (readingProgressFrame !== null) return;
+      readingProgressFrame = window.requestAnimationFrame(updatePageReadingProgress);
+    }
     window.addEventListener('scroll', () => {
       scrollingDown = window.scrollY >= previousScrollY;
       previousScrollY = window.scrollY;
       topButton.classList.toggle('show', window.scrollY > 700);
+      requestPageReadingProgressUpdate();
     });
+    window.addEventListener('resize', requestPageReadingProgressUpdate);
     topButton.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 
     const pageViews = [...document.querySelectorAll('.page-view')];
@@ -1941,8 +2208,6 @@ description: Use when a frontline employee receives a report of repeated interne
     const progressLabel = document.getElementById('progress-label');
     const progressFill = document.getElementById('progress-fill');
     const rail = document.querySelector('.rail');
-    const guidedModeButton = document.getElementById('guided-mode-button');
-    const referenceModeButton = document.getElementById('reference-mode-button');
 
     const stagePlans = {
       week7: [
@@ -2109,16 +2374,19 @@ description: Use when a frontline employee receives a report of repeated interne
       const guide = document.createElement('div');
       guide.className = 'stage-guide';
       const historyText = stagePlans[weekKey].slice(0, stageNumber - 1).map(stage => stage.output).join(' · ');
-      const optionalAvailable = stageSections.some(section => section.classList.contains('optional-section'));
       const stageCount = stagePlans[weekKey].length;
-      guide.innerHTML = `<div class="stage-guide-top"><div><div class="stage-kicker">Stage ${stageNumber} of ${stageCount}</div><h2>${plan.title}</h2><p>${plan.purpose}</p></div><div class="stage-output"><strong>This stage produces</strong>${plan.output}${optionalAvailable ? '<br><small>Optional depth is available in Reference view.</small>' : ''}</div></div>${historyText ? `<div class="stage-history"><strong>Journey so far:</strong> ${historyText}</div>` : ''}`;
+      guide.innerHTML = `<div class="stage-guide-top"><div><div class="stage-kicker">Stage ${stageNumber} of ${stageCount}</div><h2>${plan.title}</h2><p>${plan.purpose}</p></div><div class="stage-output"><strong>This stage produces</strong>${plan.output}</div></div>${historyText ? `<div class="stage-history"><strong>Journey so far:</strong> ${historyText}</div>` : ''}`;
       guide.append(createProgressButtons(weekKey, stageNumber));
       requiredSections[0].insertAdjacentElement('beforebegin', guide);
 
       const footer = document.createElement('div');
       footer.className = 'stage-footer';
       const isLast = stageNumber === stagePlans[weekKey].length;
-      footer.innerHTML = `<p><strong>Carry this forward:</strong> ${plan.takeaway}</p>`;
+      footer.innerHTML = `<p><strong>${isLast ? 'Carry this forward:' : 'Next-stage focus:'}</strong> ${plan.takeaway}</p>`;
+      if (isLast) {
+        footer.dataset.finalWeek = weekKey;
+        footer.hidden = !weekPreparationIsUnlocked(weekKey);
+      }
       const nextButton = document.createElement('button');
       nextButton.type = 'button';
       if (!isLast) {
@@ -2173,31 +2441,8 @@ description: Use when a frontline employee receives a report of repeated interne
       activateNavLink(plan.first, true);
       if (updateHistory) window.history.replaceState({targetId:plan.first}, '', '#' + plan.first);
       requestAnimationFrame(() => guide.scrollIntoView({behavior:'smooth', block:'start'}));
+      requestAnimationFrame(updatePageReadingProgress);
     }
-
-    function setReadingMode(mode) {
-      const guided = mode === 'guided';
-      document.body.classList.toggle('guided-mode', guided);
-      document.body.classList.toggle('reference-mode', !guided);
-      guidedModeButton.classList.toggle('active', guided);
-      referenceModeButton.classList.toggle('active', !guided);
-      guidedModeButton.setAttribute('aria-pressed', String(guided));
-      referenceModeButton.setAttribute('aria-pressed', String(!guided));
-      if (!guided) progressCard.hidden = true;
-      localStorage.setItem('infs5706-reading-mode', mode);
-      document.querySelectorAll('.guided-start, .guided-start-next, .stage-guide, .stage-footer').forEach(item => item.remove());
-      const activeView = document.querySelector('.page-view.active-view');
-      const weekKey = weekKeyForView(activeView);
-      if (guided && weekKey) {
-        const target = document.getElementById(location.hash.slice(1));
-        const stage = target && target.dataset.stage ? Number(target.dataset.stage) : null;
-        if (stage) showStage(weekKey, stage, false);
-        else renderWeekStart(activeView);
-      }
-    }
-
-    guidedModeButton.addEventListener('click', () => setReadingMode('guided'));
-    referenceModeButton.addEventListener('click', () => setReadingMode('reference'));
 
     function activateNavLink(targetId, keepVisible = false) {
       let activeLink = navLinks.find(link => link.getAttribute('href') === '#' + targetId);
@@ -2249,17 +2494,73 @@ description: Use when a frontline employee receives a report of repeated interne
       }
     }
 
-    const revealSections = [...document.querySelectorAll('.module > section')];
-    revealSections.forEach(section => section.classList.add('reveal-section'));
+    function prepareOptionalSections() {
+      document.querySelectorAll('section.optional-section').forEach(section => {
+        if (section.classList.contains('optional-prepared')) return;
+        const heading = section.querySelector(':scope > h2');
+        const title = heading ? heading.textContent.replace(/\s+/g, ' ').trim() : 'Optional extension';
+        if (heading) heading.remove();
+        const details = document.createElement('details');
+        details.className = 'optional-expander';
+        const summary = document.createElement('summary');
+        summary.innerHTML = `<span class="optional-kicker">Optional extension · excluded from the required pathway</span><strong>${title}</strong><span class="optional-action" aria-hidden="true"></span>`;
+        const body = document.createElement('div');
+        body.className = 'optional-expander-body';
+        while (section.firstChild) body.append(section.firstChild);
+        details.append(summary, body);
+        section.append(details);
+        section.classList.add('optional-prepared');
+      });
+    }
+    prepareOptionalSections();
+
+    const revealSelector = [
+      '.orientation > .section-label', '.orientation > .section-title', '.orientation > .preparation-requirement',
+      '.orientation .week-card', '.orientation > .callout', '.module > .module-head', '.module > .preparation-requirement',
+      '.module > .module-banner', '.module > .module-overview', '.module > .small-scale-note',
+      '.module > .time-note', '.module > .scenario-thread', '.module > .scenario-arc',
+      '.module > .journey-intro', '.module > .week-journey', '.module > .stage-guide',
+      '.module > .stage-footer', '.module > .week-recap', '.module > .seminar-celebration',
+      '.module > .week-transition', 'section[data-stage] > h2', 'section[data-stage] > h3',
+      'section[data-stage] > p', 'section[data-stage] > ul', 'section[data-stage] > ol',
+      'section[data-stage] > figure', 'section[data-stage] > div',
+      'section[data-stage] > .grid', 'section[data-stage] > .diagram',
+      'section[data-stage] > .case-grid', 'section[data-stage] > .required-case-layout',
+      'section[data-stage] > .media-card', 'section[data-stage] > .media-lesson',
+      'section[data-stage] > .reading-lesson', 'section[data-stage] > .callout',
+      'section[data-stage] > .quick-check', 'section[data-stage] > details'
+    ].join(',');
+    let revealScrollY = window.scrollY;
+    let revealDirection = 'down';
+    window.addEventListener('scroll', () => {
+      const nextY = window.scrollY;
+      if (Math.abs(nextY - revealScrollY) > 2) revealDirection = nextY > revealScrollY ? 'down' : 'up';
+      revealScrollY = nextY;
+    }, {passive:true});
     const revealObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          revealObserver.unobserve(entry.target);
+        const belongsToActiveView = Boolean(entry.target.closest('.page-view.active-view'));
+        const visible = entry.isIntersecting && belongsToActiveView;
+        entry.target.classList.toggle('is-visible', visible);
+        if (visible) {
+          entry.target.classList.toggle('reveal-from-up', revealDirection === 'up');
+          entry.target.classList.toggle('reveal-from-down', revealDirection !== 'up');
         }
       });
-    }, {threshold:.08, rootMargin:'0px 0px -10% 0px'});
-    revealSections.forEach(section => revealObserver.observe(section));
+    }, {threshold:.12, rootMargin:'-3% 0px -9% 0px'});
+    function registerRevealTargets(root = document) {
+      root.querySelectorAll(revealSelector).forEach(element => {
+        if (element.dataset.revealRegistered === 'true') return;
+        element.dataset.revealRegistered = 'true';
+        element.classList.add('scroll-reveal');
+        revealObserver.observe(element);
+      });
+    }
+    registerRevealTargets();
+    const revealMutationObserver = new MutationObserver(records => {
+      if (records.some(record => record.addedNodes.length)) registerRevealTargets();
+    });
+    revealMutationObserver.observe(document.getElementById('main-content'), {childList:true, subtree:true});
 
     const trackedSections = navLinks
       .map(link => document.querySelector(link.getAttribute('href')))
@@ -2311,7 +2612,8 @@ description: Use when a frontline employee receives a report of repeated interne
       document.querySelectorAll('.guided-start, .guided-start-next, .stage-guide, .stage-footer').forEach(item => item.remove());
       const weekKey = weekKeyForView(view);
       const guided = document.body.classList.contains('guided-mode');
-      const targetStage = target.dataset.stage ? Number(target.dataset.stage) : null;
+      const stageContainer = target.matches('section[data-stage]') ? target : target.closest('section[data-stage]');
+      const targetStage = stageContainer ? Number(stageContainer.dataset.stage) : null;
       if (guided && weekKey && targetStage) showStage(weekKey, targetStage, false);
       else {
         activateNavLink(target.id, true);
@@ -2325,13 +2627,15 @@ description: Use when a frontline employee receives a report of repeated interne
 
       if (updateHistory) history.pushState({targetId:target.id}, '', '#' + target.id);
       requestAnimationFrame(() => {
-        view.querySelectorAll('.reveal-section').forEach(section => revealObserver.observe(section));
+        registerRevealTargets(view);
         if (view.id === 'overview') {
           window.scrollTo({top:0, behavior:updateHistory ? 'smooth' : 'auto'});
+          requestAnimationFrame(updatePageReadingProgress);
           return;
         }
-        const destination = guided && targetStage ? view.querySelector('.stage-guide') : target;
+        const destination = guided && targetStage && target === stageContainer ? view.querySelector('.stage-guide') : target;
         destination.scrollIntoView({behavior:'smooth', block:'start'});
+        requestAnimationFrame(updatePageReadingProgress);
       });
     }
 
@@ -2343,7 +2647,8 @@ description: Use when a frontline employee receives a report of repeated interne
         const target = document.getElementById(targetId);
         const targetView = target.closest('.page-view');
         const targetWeek = weekKeyForView(targetView);
-        const targetStage = Number(target.dataset.stage || 0);
+        const stageContainer = target.matches('section[data-stage]') ? target : target.closest('section[data-stage]');
+        const targetStage = Number(stageContainer ? stageContainer.dataset.stage : 0);
         if (document.body.classList.contains('guided-mode') && targetWeek && targetStage > unlockedStages[targetWeek]) {
           showStage(targetWeek, unlockedStages[targetWeek]);
           return;
@@ -2352,9 +2657,8 @@ description: Use when a frontline employee receives a report of repeated interne
       });
     });
 
-    localStorage.setItem('infs5706-reading-mode', 'guided');
-    setReadingMode('guided');
     updateWeekCompletionIndicator();
+    updatePageReadingProgress();
     window.addEventListener('popstate', () => showView(location.hash.slice(1) || 'overview', false));
     showView(location.hash.slice(1) || 'overview', false);
   </script>

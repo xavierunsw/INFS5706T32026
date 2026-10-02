@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Week 7 Simple Agent Seminar Portal</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <a class="brand" href="index.html"><img src="https://www.unsw.edu.au/content/dam/images/unsw-wide/general/branding/2022-12-brand/sydney-landscape.cropimg.width=1920.png" alt="UNSW Sydney"><span>INFS5706 · AI in Action</span></a>
+    <div class="header-actions"><span class="save-state" id="saveState">Saved on this device</span><a class="secondary" href="facilitator.html">Facilitator</a></div>
+  </header>
+  <div class="progress-wrap" aria-label="Page progress"><div class="progress-bar" id="progressBar"></div></div>
+  <section class="hero">
+    <div class="hero-inner"><div class="eyebrow">Week 7 seminar portal</div><h1>Design, configure and challenge a simple agent</h1><p class="lead">Follow the seminar journey with your team. One nominated recorder completes the design while every member participates in discussion, testing and defence.</p></div>
+  </section>
+  <div class="layout">
+    <nav class="rail" aria-label="Seminar phases"><h2>Your journey</h2><div id="phaseNav"></div><div class="rail-note submission-rail"><strong>Participation hand-up</strong><span>One recorder completes the portal on one device, downloads the Word record in Phase 8 and submits it at the end of the seminar.</span></div><div class="rail-note"><strong>Local work:</strong> responses are saved only in this browser. Use the same device throughout the seminar.</div></nav>
+    <main class="content" id="main">
+      <section class="panel" id="setup"><div class="section-label">Start here</div><h2>Set up your team workspace</h2><div class="submission-callout"><div class="submission-callout__label">Required participation hand-up</div><h3>Complete one team record and submit it at the end of the seminar</h3><p>Nominate one recorder to complete the portal on one device. In Phase 8, the recorder downloads the completed Word record and submits it using the method announced by your facilitator.</p></div><p>Every member should keep the portal open and contribute to the discussion, design, testing and defence.</p><div class="grid three"><div class="card"><div class="icon">1</div><h3>Facilitator</h3><p>Keeps the team moving and brings quieter voices into the discussion.</p></div><div class="card"><div class="icon">2</div><h3>Recorder</h3><p>Completes the portal on one device, downloads the final Word record and submits it.</p></div><div class="card"><div class="icon">3</div><h3>Tester</h3><p>Runs the representative and challenge cases and reports observed behaviour.</p></div></div><form id="teamForm"><label for="teamNumber">Team number</label><input id="teamNumber" type="number" min="1" max="9" required><label for="teamMembers">Team member names or initials</label><input id="teamMembers" type="text" placeholder="Optional on individual devices"><div class="controls"><button class="button yellow" type="submit">Open team workspace</button></div></form><div id="teamSummary" class="notice" hidden></div></section>
+      <div id="journey" hidden></div>
+    </main>
+  </div>
+  <footer class="footer"><div class="footer-inner"><strong>UNSW Sydney</strong><p class="copyright">© Xavier Jusay, created with Codex. For enrolled-student use. Do not republish, reproduce or share externally without permission.</p></div></footer>
+  <script src="config.js"></script><script src="data.js"></script><script src="app.js"></script>
+</body>
+</html>

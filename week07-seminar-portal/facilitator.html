@@ -1,0 +1,28 @@
+<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Week 7 Facilitator Console</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<section class="projected-timer" id="projectedTimer" hidden aria-label="Projected seminar timer">
+  <div class="projected-timer__brand"><img src="https://www.unsw.edu.au/content/dam/images/unsw-wide/general/branding/2022-12-brand/sydney-landscape.cropimg.width=1920.png" alt="UNSW Sydney"><span>INFS5706 · AI in Action</span></div>
+  <div class="projected-timer__body">
+    <div class="projected-timer__phase-number" id="projectedPhaseNumber">Phase 1 of 8</div>
+    <h1 id="projectedPhase">Authority warm-up</h1>
+    <div class="projected-timer__clock" id="projectedClock">10:00</div>
+    <div class="projected-timer__status" id="projectedStatus">Ready</div>
+    <div class="projected-timer__instruction"><span>Now</span><p id="projectedInstruction">Choose the authority you would give the agent for each action.</p></div>
+  </div>
+  <div class="projected-timer__controls">
+    <button class="button yellow" id="projectedStartPause">Start</button>
+    <button class="button light" id="exitProjection">Return to console</button>
+  </div>
+</section>
+<div class="auth-overlay" id="auth"><div class="auth-card"><div class="eyebrow">Facilitator access</div><h1 style="font-size:2.4rem">Week 7 console</h1><p>This client-side passcode deters ordinary access. It is not secure authentication.</p><form id="authForm"><label for="passcode">Passcode</label><input id="passcode" type="password" autocomplete="current-password"><div class="controls"><button class="button yellow">Open console</button></div><div class="gate-error" id="authError" aria-live="polite"></div></form></div></div>
+<header class="site-header"><a class="brand" href="index.html"><img src="https://www.unsw.edu.au/content/dam/images/unsw-wide/general/branding/2022-12-brand/sydney-landscape.cropimg.width=1920.png" alt="UNSW Sydney"><span>Week 7 Facilitator Console</span></a><div class="header-actions"><a href="present.html">Standalone presentation</a><a class="secondary" href="index.html">Student portal</a></div></header>
+<section class="hero"><div class="hero-inner"><div class="eyebrow">Educator-only classroom controls</div><h1>Release phases and keep the seminar moving</h1><p class="lead">Project the timer. Announce one release code at a time. Student work remains in each browser and is not visible here.</p></div></section>
+<main class="layout" style="grid-template-columns:1fr"><div class="content">
+  <section class="panel"><div class="section-label">Master timer</div><h2 id="timerPhase">Authority warm-up</h2><div class="timer-display" id="timer">10:00</div><div class="timer-label" id="timerStatus">Ready</div><div class="controls" style="justify-content:center"><button class="button yellow" id="startPause">Start</button><button class="button light" id="resetTimer">Reset</button><button class="button light" id="addMinute">+1 minute</button><button class="button light" id="fullScreen">Show timer here</button></div><label for="phaseSelect">Timer preset</label><select id="phaseSelect"></select></section>
+  <section class="panel projection-console"><div class="section-label">Projector control</div><h2>Slides and timer from one console</h2><p>Open the projector window on the display students will see. Control its slides and switch between slides and the timer from here.</p><div class="projection-status"><span id="projectorStatusDot" aria-hidden="true"></span><strong id="projectorStatus">Projector window not connected</strong><span id="consoleSlideNumber">Slide 1 of 13</span></div><div class="controls"><a class="button yellow" id="openProjector" href="present.html?projector=1" target="_blank">Open projector window</a><button class="button light" id="showSlides">Show slides</button><button class="button light" id="showTimer">Show timer</button></div><div class="controls"><button class="button light" id="consolePrev">← Previous slide</button><button class="button yellow" id="consoleNext">Next slide →</button></div></section>
+  <section class="panel"><div class="section-label">Release controls</div><h2>Phase codes</h2><p>Students enter each code locally. Releasing a code here means displaying or announcing it.</p><div id="phaseControls"></div></section>
+  <section class="panel"><div class="section-label">Team allocation</div><h2>Eight or nine teams</h2><table class="allocation"><thead><tr><th>Team</th><th>Case</th><th>Student link</th></tr></thead><tbody id="allocationBody"></tbody></table></section>
+  <section class="panel"><div class="section-label">Challenge release</div><h2>Facilitator case prompts</h2><p>Reveal the appropriate challenge only after teams complete the representative run.</p><div id="challengeCards" class="grid"></div></section>
+</div></main>
+<footer class="footer"><div class="footer-inner"><p class="copyright">© Xavier Jusay, created with Codex. Facilitator material. Do not share externally without permission.</p></div></footer>
+<script src="config.js"></script><script src="data.js"></script><script src="facilitator-data.js"></script><script src="facilitator.js?v=5"></script></body></html>

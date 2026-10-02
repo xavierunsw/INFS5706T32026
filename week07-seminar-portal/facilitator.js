@@ -7,7 +7,7 @@
   const slideCount=13;
   const phaseStartSlides={1:0,3:1,5:2,7:3,9:4,10:5,11:6,12:7};
   const projectionChannel='BroadcastChannel' in window?new BroadcastChannel('infs5706-w7-presentation'):null;
-  let projectorWindow=null,projectionMode='slides',currentSlide=0,projectorConnected=false;
+  let projectorWindow=null,projectionMode='slides',currentSlide=0,projectorConnected=false,lastProjectorSeen=0;
   const instructions=[
     'Choose the authority you would give the agent for each action.',
     'Observe the agent’s goal, process, knowledge and stopping boundary.',
@@ -24,6 +24,8 @@
   function sendProjection(message){projectionChannel?.postMessage(message);if(projectorWindow&&!projectorWindow.closed)projectorWindow.postMessage({source:'w7-facilitator',...message},location.origin);}
   function syncProjection(){sendProjection({type:'state',mode:projectionMode,slide:currentSlide,timer:timerState()});}
   function updateProjectorStatus(){$('#projectorStatus').textContent=projectorConnected?'Projector window connected':'Projector window not connected';$('#projectorStatusDot').classList.toggle('connected',projectorConnected);$('#consoleSlideNumber').textContent=`Slide ${currentSlide+1} of ${slideCount}`;}
+  function markProjectorSeen(){lastProjectorSeen=Date.now();if(!projectorConnected){projectorConnected=true;updateProjectorStatus();}}
+  function markProjectorClosed(){lastProjectorSeen=0;projectorConnected=false;projectorWindow=null;updateProjectorStatus();}
   function draw(){const t=timerState();$('#timer').textContent=t.clock;$('#timerStatus').textContent=t.status;$('#projectedClock').textContent=t.clock;$('#projectedStatus').textContent=t.status;$('#projectedStartPause').textContent=running?'Pause':'Start';sendProjection({type:'timer',timer:t});}
   function setPhase(){const index=Number(select.value),p=config.phases[index];remaining=p.minutes*60;running=false;clearInterval(timerId);$('#timerPhase').textContent=p.label;$('#projectedPhase').textContent=p.label;$('#projectedPhaseNumber').textContent=`Phase ${index+1} of ${config.phases.length}`;$('#projectedInstruction').textContent=instructions[index];$('#startPause').textContent='Start';draw();}
   function tick(){if(remaining>0){remaining--;draw();}else{running=false;clearInterval(timerId);$('#startPause').textContent='Start';draw();}}
@@ -36,13 +38,15 @@
   $('#fullScreen').addEventListener('click',async()=>{const view=$('#projectedTimer');view.hidden=false;draw();try{await view.requestFullscreen?.();}catch(_){/* The projected view still fills the browser window. */}});
   $('#exitProjection').addEventListener('click',closeProjection);
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)$('#projectedTimer').hidden=true;});
-  $('#openProjector').addEventListener('click',()=>{projectorConnected=false;updateProjectorStatus();setTimeout(syncProjection,500);});
+  $('#openProjector').addEventListener('click',e=>{e.preventDefault();projectorConnected=false;updateProjectorStatus();projectorWindow=window.open(e.currentTarget.href,'w7-projector');setTimeout(()=>{sendProjection({type:'ping'});syncProjection();},500);});
   $('#showSlides').addEventListener('click',()=>{projectionMode='slides';sendProjection({type:'mode',mode:'slides'});});
   $('#showTimer').addEventListener('click',()=>{projectionMode='timer';sendProjection({type:'mode',mode:'timer',timer:timerState()});});
   $('#consolePrev').addEventListener('click',()=>{currentSlide=Math.max(0,currentSlide-1);sendProjection({type:'slide',index:currentSlide});updateProjectorStatus();});
   $('#consoleNext').addEventListener('click',()=>{currentSlide=Math.min(slideCount-1,currentSlide+1);if(Object.hasOwn(phaseStartSlides,currentSlide)){select.value=phaseStartSlides[currentSlide];setPhase();}sendProjection({type:'slide',index:currentSlide});updateProjectorStatus();});
-  projectionChannel&&(projectionChannel.onmessage=e=>{const message=e.data||{};if(message.type==='ready'){projectorConnected=true;updateProjectorStatus();syncProjection();}if(message.type==='slideChanged'){currentSlide=Math.max(0,Math.min(slideCount-1,Number(message.index)||0));updateProjectorStatus();}});
-  addEventListener('message',e=>{if(e.origin!==location.origin||e.data?.source!=='w7-projector')return;if(e.data.type==='ready'){projectorConnected=true;updateProjectorStatus();syncProjection();}if(e.data.type==='slideChanged'){currentSlide=Math.max(0,Math.min(slideCount-1,Number(e.data.index)||0));updateProjectorStatus();}});
+  projectionChannel&&(projectionChannel.onmessage=e=>{const message=e.data||{};if(message.type==='ready'){markProjectorSeen();syncProjection();}if(message.type==='slideChanged'){markProjectorSeen();currentSlide=Math.max(0,Math.min(slideCount-1,Number(message.index)||0));updateProjectorStatus();}if(message.type==='closing')markProjectorClosed();});
+  addEventListener('message',e=>{if(e.origin!==location.origin||e.data?.source!=='w7-projector')return;if(e.data.type==='ready'){markProjectorSeen();syncProjection();}if(e.data.type==='slideChanged'){markProjectorSeen();currentSlide=Math.max(0,Math.min(slideCount-1,Number(e.data.index)||0));updateProjectorStatus();}if(e.data.type==='closing')markProjectorClosed();});
+  setInterval(()=>{sendProjection({type:'ping'});if(projectorConnected&&Date.now()-lastProjectorSeen>5000)markProjectorClosed();},2000);
+  addEventListener('focus',()=>sendProjection({type:'ping'}));
   updateProjectorStatus();
   setPhase();
   sendProjection({type:'ping'});

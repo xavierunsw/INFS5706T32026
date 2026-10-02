@@ -11,10 +11,10 @@
     {do:'Observe the demonstration and identify the agent’s goal, process, knowledge and stopping boundary.',good:'Your diagnosis refers to behaviour you observed, rather than the quality of the final answer alone.'},
     {do:'Classify current AskTelstra and examine the customer scenario allocated to your team.',good:'Your classification separates reported evidence from assumptions and identifies evidence that is still missing.'},
     {do:'Complete all eight design decisions before opening an agent-building tool.',good:'The user, bounded goal, inputs, process, knowledge, output, prohibitions and human responsibility fit together.'},
-    {do:'Generate the instructions, challenge their ambiguity and revise at least one weakness.',good:'The instructions tell the agent what to do, what evidence it may use, when to stop and when to escalate.'},
+    {do:'Generate the instructions, identify the weakness most likely to affect behaviour, revise it and complete the quality gate.',good:'The instructions define the task, evidence, output, boundaries and escalation clearly enough to configure.'},
     {do:'Configure the agent, add the approved knowledge source and run the representative synthetic case.',good:'The agent gathers important gaps, uses approved guidance, produces the required output and stays within its boundary.'},
     {do:'Run the challenge variation, compare expected and observed behaviour, revise one instruction and rerun it.',good:'Your recorded evidence shows whether the revision changed the relevant behaviour.'},
-    {do:'Show the agent briefly, defend your implementation judgement, then download and submit the team record.',good:'Your defence uses observed behaviour to explain value, limitation, revision and continuing human responsibility.'}
+    {do:'Prepare a 60-second defence. Every team submits; selected teams will share when called.',good:'Your defence uses observed behaviour to justify a retain, revise or reject decision and identifies continuing human responsibility.'}
   ];
 
   function storageKey(){ return state.team ? `infs5706-w7-team-${state.team}` : "infs5706-w7-unassigned"; }
@@ -75,10 +75,17 @@
       <p>The composer organises your design decisions into an instruction. It does not repair missing or weak decisions.</p>
       <div class="controls"><button class="button yellow" id="generateInstructions">Generate instructions</button><button class="button light" id="copyInstructions">Copy instructions</button></div>
       <label for="generatedInstructions">Editable agent instructions</label><textarea id="generatedInstructions" class="generated" data-field="generatedInstructions" rows="20">${escapeHtml(state.responses.generatedInstructions||"")}</textarea>
-      ${field("peerAmbiguity","Peer challenge: one ambiguous instruction","What could the agent interpret in more than one way?",2)}
-      ${field("peerMissing","Peer challenge: one missing rule","Identify a missing-information, stopping or escalation condition.",2)}
-      ${field("peerHuman","Peer challenge: one unclear human responsibility","Where could the agent exceed the intended boundary?",2)}
-      ${field("instructionRevision","Revision made before configuration","State the change and the design weakness it addresses.",2)}`);
+      <label for="instructionRisk">Which weakness is most likely to affect the agent’s behaviour?</label><select id="instructionRisk" data-field="instructionRisk"><option value="">Choose…</option><option>Ambiguous wording</option><option>Missing information requirement</option><option>Unsupported or unclear evidence source</option><option>Weak stopping or escalation condition</option><option>Unclear human responsibility</option></select>
+      ${field("instructionWeakness","Explain the most consequential weakness","What could the agent do incorrectly, incompletely or beyond its authority?",2)}
+      ${field("instructionRevision","Revision made before configuration","State the revised wording and how it addresses the weakness.",3)}
+      <div class="quality-gate"><div><span>Pre-build quality gate</span><h3>Do not configure until another team member checks all five conditions</h3></div>
+        <label><input type="checkbox" data-check="qualityGoal"> The goal is singular and bounded.</label>
+        <label><input type="checkbox" data-check="qualityInputs"> Required information and approved evidence are explicit.</label>
+        <label><input type="checkbox" data-check="qualityOutput"> The required output is clear.</label>
+        <label><input type="checkbox" data-check="qualityBoundary"> Stopping and escalation conditions are explicit.</label>
+        <label><input type="checkbox" data-check="qualityHuman"> An authorised person retains consequential decisions.</label>
+      </div>
+      ${field("qualityGateNote","Quality-gate decision","Record the final change made, or state why the design is ready to configure.",2)}`);
     const build=panel(5,"build","Configure and run the representative case",`
       <div class="grid"><div class="card"><h3>1. Configure</h3><p>Paste the instructions into Microsoft Copilot Agent Builder or ChatGPT GPT Builder.</p></div><div class="card"><h3>2. Add knowledge</h3><p>Use the public case guidance URL supplied in Phase 4.</p></div><div class="card"><h3>3. Run</h3><p>Begin with the customer opening message. Supply additional synthetic facts only when the agent asks appropriately.</p></div><div class="card"><h3>4. Observe</h3><p>Record evidence about the process, output, uncertainty and boundary.</p></div></div>
       <div class="scenario"><h3>Representative customer message</h3><blockquote>${escapeHtml(c.opening)}</blockquote></div>
@@ -94,7 +101,8 @@
       ${field("challengeChange","What did you change?","Improve the process, evidence use, boundary or stopping behaviour.",2)}
       ${field("challengeRetest","What happened after the change?","Record the result of the rerun.",3)}`);
     const defend=panel(7,"defend","Show, tell and defend",`
-      <div class="grid three"><div class="card"><h3>The job</h3><p>Who does the agent support and what bounded outcome does it pursue?</p></div><div class="card"><h3>The behaviour</h3><p>What did it do across the task?</p></div><div class="card"><h3>The output</h3><p>What useful recommendation or handover did it produce?</p></div><div class="card"><h3>The boundary</h3><p>Where must a person review, decide or act?</p></div><div class="card"><h3>The revision</h3><p>What did the challenge case cause you to change?</p></div><div class="card"><h3>The decision</h3><p>Retain, revise or reject the design?</p></div></div>
+      <div class="notice"><strong>Every team submits its record.</strong> The facilitator will invite one team from each case type, followed by teams with materially different findings as time allows.</div>
+      <div class="grid three"><div class="card"><h3>1. The job</h3><p>Who does the agent support and what bounded outcome does it pursue?</p></div><div class="card"><h3>2. The evidence</h3><p>What behaviour mattered most, and what changed after your revision?</p></div><div class="card"><h3>3. The decision</h3><p>Retain, revise or reject the design, and what responsibility remains with a person?</p></div></div>
       <label for="finalDecision">Final design judgement</label><select id="finalDecision" data-field="finalDecision"><option value="">Choose…</option><option>Retain</option><option>Revise</option><option>Reject</option></select>
       ${field("finalReason","Defend your decision","Refer to observed behaviour, value, limitation and human responsibility.",3)}
       <div class="controls"><button class="button yellow" id="downloadDocx">Download team record (.docx)</button><button class="button light" id="resetTeam">Reset this team workspace</button></div>
@@ -104,7 +112,7 @@
     renderWarmup(); bindJourney(); renderNav(); updateNav();
   }
   function renderWarmup(){
-    const items=["Find the nearest café that is currently open.","Order your usual coffee for collection.","Message your tutor that you will be late.","Explain your absence using a plausible excuse.","Withdraw you from today’s class because your calendar looks busy.","Accept a graduate job offer because it matches your preferences."];
+    const items=["Find the nearest café that is currently open.","Order your usual coffee for collection.","Message your tutor that you will be late.","Accept a graduate job offer because it matches your preferences."];
     const host=$("#warmupItems"); if(!host) return;
     host.innerHTML=items.map((item,i)=>`<div class="card" style="margin:12px 0"><strong>${i+1}. ${item}</strong><div class="choice-row" data-vote="${i}">${["ACT","CHECK","STOP"].map(v=>`<button type="button" class="choice ${state.votes[i]===v?"selected":""}" data-value="${v}">${v}</button>`).join("")}</div></div>`).join("");
     $$("[data-vote]").forEach(row=>row.addEventListener("click",e=>{const b=e.target.closest("button[data-value]");if(!b)return;state.votes[row.dataset.vote]=b.dataset.value;$$('button',row).forEach(x=>x.classList.toggle('selected',x===b));save();}));
@@ -119,6 +127,10 @@
     $$('[data-field]').forEach(el=>{
       const event=el.tagName==="SELECT"?"change":"input";
       el.addEventListener(event,()=>{state.responses[el.dataset.field]=el.value;save();});
+    });
+    $$('[data-check]').forEach(el=>{
+      el.checked=Boolean(state.responses[el.dataset.check]);
+      el.addEventListener('change',()=>{state.responses[el.dataset.check]=el.checked;save();});
     });
     $$('[data-gate] form').forEach(form=>form.addEventListener('submit',e=>{
       e.preventDefault(); const box=form.closest('[data-gate]'); const index=Number(box.dataset.gate); const entered=$('input',form).value.trim().toUpperCase(); const expected=config.phases[index].code.toUpperCase();
@@ -151,7 +163,8 @@
   function p(text,style=""){return `<w:p>${style?`<w:pPr><w:pStyle w:val="${style}"/></w:pPr>`:""}<w:r><w:t xml:space="preserve">${xmlEscape(text)}</w:t></w:r></w:p>`;}
   function downloadDocx(){
     const c=cases[state.caseId],r=state.responses;
-    const sections=[['Team',`Team ${state.team}${state.members?` · ${state.members}`:''}`],['Allocated case',`Case ${c.code} · ${c.title}`],['User',r.user],['Goal',r.goal],['Inputs',r.inputs],['Process',r.process],['Knowledge',r.knowledge],['Output',r.output],['Boundaries',r.boundaries],['Human responsibility',r.human],['Final agent instructions',r.generatedInstructions],['Representative run: behaviour that worked',r.buildWorked],['Representative run: behaviour that did not work',r.buildFailed],['Representative run: useful output',r.buildOutput],['Challenge: expected behaviour',r.challengeExpected],['Challenge: observed behaviour',r.challengeObserved],['Challenge: instruction responsible or missing',r.challengeCause],['Challenge: change made',r.challengeChange],['Challenge: retest result',r.challengeRetest],['Final judgement',r.finalDecision],['Decision rationale',r.finalReason]];
+    const qualityGate=['qualityGoal','qualityInputs','qualityOutput','qualityBoundary','qualityHuman'].every(k=>r[k])?'All five checks completed.':'One or more checks incomplete.';
+    const sections=[['Team',`Team ${state.team}${state.members?` · ${state.members}`:''}`],['Allocated case',`Case ${c.code} · ${c.title}`],['User',r.user],['Goal',r.goal],['Inputs',r.inputs],['Process',r.process],['Knowledge',r.knowledge],['Output',r.output],['Boundaries',r.boundaries],['Human responsibility',r.human],['Final agent instructions',r.generatedInstructions],['Most consequential instruction weakness',`${r.instructionRisk||'Not selected'}${r.instructionWeakness?`: ${r.instructionWeakness}`:''}`],['Pre-build revision',r.instructionRevision],['Quality gate',qualityGate],['Quality-gate decision',r.qualityGateNote],['Representative run: behaviour that worked',r.buildWorked],['Representative run: behaviour that did not work',r.buildFailed],['Representative run: useful output',r.buildOutput],['Challenge: expected behaviour',r.challengeExpected],['Challenge: observed behaviour',r.challengeObserved],['Challenge: instruction responsible or missing',r.challengeCause],['Challenge: change made',r.challengeChange],['Challenge: retest result',r.challengeRetest],['Final judgement',r.finalDecision],['Decision rationale',r.finalReason]];
     const body=[p('Week 7 Simple Agent Design and Build Record','Title'),p('AskTelstra seminar simulation','Subtitle'),...sections.flatMap(([h,v])=>[p(h,'Heading1'),p(v||'No response recorded.')]),p('Generated from the Week 7 seminar portal. All case information is synthetic.')].join('');
     const files={
       '[Content_Types].xml':'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>',

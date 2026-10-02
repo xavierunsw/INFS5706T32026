@@ -154,6 +154,7 @@ textarea{min-height:110px;resize:vertical}
 .journey-map span{font-size:.82rem;font-weight:850;line-height:1.18;max-width:110px}
 .groundrules{display:grid;grid-template-columns:190px 1fr;gap:24px;background:#111;color:#fff;padding:22px 26px;border-top:7px solid #fff}
 .groundrules>strong{color:#ffe600;font-size:1.4rem;line-height:1.1}.groundrules ul{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;margin:0;padding-left:22px}.groundrules li{font-size:.95rem;margin:0}.groundrules li::marker{color:#ffe600}
+.quality-gate{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;background:#e7f4f6;border-left:8px solid #1f7a8c;padding:20px;margin:24px 0}.quality-gate>div{grid-column:1/-1}.quality-gate>div span{font-size:.78rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#145b69}.quality-gate h3{margin:5px 0 0}.quality-gate label{display:flex;gap:10px;align-items:flex-start;font-weight:700}.quality-gate input{width:20px;height:20px;flex:0 0 auto;margin-top:1px}
 .phase-control{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;border-bottom:1px solid var(--line);padding:16px 0}
 .code{font:800 1.1rem ui-monospace,SFMono-Regular,Menlo,monospace;background:#111;color:#fff;padding:8px 11px}
 .allocation{width:100%;border-collapse:collapse}

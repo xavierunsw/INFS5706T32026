@@ -1,13 +1,13 @@
 window.PORTAL_CONFIG = {
   phases: [
-    { id: "warmup", label: "Authority warm-up", code: null, minutes: 10 },
-    { id: "observe", label: "Observe a simple agent", code: "OBSERVE7", minutes: 10 },
-    { id: "transfer", label: "Transfer to AskTelstra", code: "TELSTRA7", minutes: 25 },
+    { id: "warmup", label: "Authority warm-up", code: null, minutes: 5 },
+    { id: "observe", label: "Observe a simple agent", code: "OBSERVE7", minutes: 15 },
+    { id: "transfer", label: "Transfer to AskTelstra", code: "TELSTRA7", minutes: 15 },
     { id: "design", label: "Design before building", code: "DESIGN7", minutes: 20 },
-    { id: "instructions", label: "Write and challenge instructions", code: "INSTRUCT7", minutes: 40 },
+    { id: "instructions", label: "Write and challenge instructions", code: "INSTRUCT7", minutes: 25 },
     { id: "build", label: "Configure and run", code: "BUILD7", minutes: 30 },
-    { id: "challenge", label: "Challenge and refine", code: "CHALLENGE7", minutes: 15 },
-    { id: "defend", label: "Show, tell and defend", code: "DEFEND7", minutes: 15 }
+    { id: "challenge", label: "Challenge and refine", code: "CHALLENGE7", minutes: 20 },
+    { id: "defend", label: "Show, tell and defend", code: "DEFEND7", minutes: 30 }
   ],
   teamAssignments: {
     1: "scam", 2: "disruption", 3: "vulnerability", 4: "billing",
